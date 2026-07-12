@@ -1,0 +1,49 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+Tank Battle Game (坦克大战) — a Java Swing desktop game using MVC architecture with dual-threaded game loop (logic + render at 60 FPS). Window size: **1380×820**.
+
+**Tech stack**: Java (JDK), Swing, Gson (JSON serialization)
+
+## Mandatory Reference Documents
+
+以下四份文档是开发的权威依据，**每次开发变更前必须阅读**：
+
+| 文档 | 作用 |
+|------|------|
+| `All.md` | **开发总文档**——完整架构、15+ 类详细设计、核心实现流程、碰撞/UI/异常处理方案 |
+| `PK.md` | **人机 AI 方案**——三层架构（感知→Utility AI决策→A*+势场执行）、三种难度参数表、射击预判算法 |
+| `data.md` | **JSON 存档数据结构**——PlayerSaveData 完整字段定义、Java 实体类、存档生命周期 |
+| `pic.md` | **图片资源清单**——约 183 张图片的命名、尺寸（以 1380×820 为基准）、目录结构 |
+
+## Key Rules
+
+1. **每次完成代码或文档更新后，必须将变更 push 到 GitHub**：
+   ```bash
+   git add -A && git commit -m "<简要描述>" && git push
+   ```
+2. 开发前先阅读上述四份参考文档
+3. 速度换算标准（定义在 `All.md` 4.10.1）：坦克实际移速 = 设计值 × 0.04，子弹 = 设计值 × 0.06，转向 = 设计值 × 0.01（均为 60 FPS 下 px/frame 或 rad/frame）
+
+## Design Documents (source of truth)
+
+- `系统功能架构设计.txt` — 完整功能规格（登录、对战、养成、抽卡、存档）
+- `坦克设计机制.txt` — 坦克属性系统、耐久减伤、改装机制
+- `坦克对象.txt` — 8 种坦克的初始数值
+- `坦克对战操作设计.txt` — 对战操作键位、暂停菜单
+
+## Architecture (planned)
+
+All visible entities extend `SuperElement` (abstract: `show()`, `move()`, `update()`, `destroy()`, `isStrike()`).
+
+| Layer | Package | Key Classes |
+|-------|---------|-------------|
+| Entry | `main` | `Main` |
+| View | `frame` | `MyJFrame`, `MyGameJPanel` |
+| Control | `thread` | `GameThread`, AI controllers (`thread/ai/`) |
+| Model | `model.vo`, `model.load`, `model.manager` | `SuperElement`, `Players`, `Bullet`, `ElementManager`, `ElementFactory`, `SaveManager` |
+
+Map files: `resource/data/*.map` — semicolon-separated `BRICK=x,y` / `IRON=x,y` entries.
