@@ -28,6 +28,21 @@ Tank Battle Game (坦克大战) — a Java Swing desktop game using MVC architec
 2. 开发前先阅读上述四份参考文档
 3. 速度换算标准（定义在 `All.md` 4.10.1）：坦克实际移速 = 设计值 × 0.04，子弹 = 设计值 × 0.06，转向 = 设计值 × 0.01（均为 60 FPS 下 px/frame 或 rad/frame）
 
+## Git Push 故障排查
+
+push 失败时按以下顺序排查：
+
+1. **SSL / 网络超时**：先确认网络连通性，再重试 push
+2. **HTTP/2 兼容问题**（如 `Recv failure`）：
+   ```bash
+   git config --global http.version HTTP/1.1
+   ```
+3. **大文件截断**（如资源图片 push 失败）：
+   ```bash
+   git config --global http.postBuffer 524288000
+   ```
+4. 以上配置已全局生效，后续 push 无需重复设置
+
 ## Design Documents (source of truth)
 
 - `系统功能架构设计.txt` — 完整功能规格（登录、对战、养成、抽卡、存档）
