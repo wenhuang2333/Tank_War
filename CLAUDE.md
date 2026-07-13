@@ -10,7 +10,7 @@ Tank Battle Game (坦克大战) — a Java Swing desktop game using MVC architec
 
 ## Mandatory Reference Documents
 
-以下四份文档是开发的权威依据，**每次开发变更前必须阅读**：
+以下五份文档是开发的权威依据，**每次开发变更前必须阅读**：
 
 | 文档 | 作用 |
 |------|------|
@@ -18,6 +18,7 @@ Tank Battle Game (坦克大战) — a Java Swing desktop game using MVC architec
 | `PK.md` | **人机 AI 方案**——三层架构（感知→Utility AI决策→A*+势场执行）、三种难度参数表、射击预判算法 |
 | `data.md` | **JSON 存档数据结构**——PlayerSaveData 完整字段定义、Java 实体类、存档生命周期 |
 | `pic.md` | **图片资源清单**——约 183 张图片的命名、尺寸（以 1380×820 为基准）、目录结构 |
+| `action.md` | **落地实施方案**——17 个模块的详细逻辑实现方案（Java Swing 可行）、开发顺序、每个模块的切入点和实现要点 |
 
 ## Key Rules
 
@@ -25,7 +26,7 @@ Tank Battle Game (坦克大战) — a Java Swing desktop game using MVC architec
    ```bash
    git add -A && git commit -m "<简要描述>" && git push
    ```
-2. 开发前先阅读上述四份参考文档
+2. 开发前先阅读上述五份参考文档，动手前先查阅 `action.md` 对应模块的实现方案
 3. 速度换算标准（定义在 `All.md` 4.10.1）：坦克实际移速 = 设计值 × 0.04，子弹 = 设计值 × 0.06，转向 = 设计值 × 0.01（均为 60 FPS 下 px/frame 或 rad/frame）
 
 ## Git Push 故障排查
