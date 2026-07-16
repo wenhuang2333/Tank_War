@@ -976,7 +976,7 @@ else → 第一位 = 'A' + (unlockedSlots - 1)
    - 累计奖励
 4. 更新 PlayerSaveData（新增坦克、资源增加、碎片增加）
 5. 自动保存
-6. 返回 GachaResult（包含所有奖励列表，供 UI 展示）
+6. 返回 GachaResult（每个 Reward 携带 `isJackpot` 标记），切入 GachaRevealPanel 翻牌展示（见 15.5）
 
 **权重随机算法：**
 1. 计算总权重 = 各奖励权重之和（含保底加成）
@@ -995,6 +995,37 @@ if (pityCounter >= 50) bonus += (pityCounter - 49) * 5;
 if (pityCounter >= 70) bonus += (pityCounter - 69) * 5;
 // bonus 加到目标大奖权重上
 ```
+
+### 15.5 翻牌展示层（GachaRevealPanel）
+
+**核心交互**：不论单抽还是十连，先显示对应抽数的牌背，玩家点击翻转，大奖卡翻开时叠加金光特效。奖励在进入本层前已结算并存档，翻牌为纯展示，中途退出不丢奖励。
+
+**切入方式**：`GachaPanel` 抽卡成功后，将 `GachaRevealPanel`（全屏，背景 `gacha_animation_bg.png`）作为覆盖层加入 `MyJFrame` 的 layeredPane（或 CardLayout 切换），传入 `List<Reward>`。
+
+**牌面布局（1380×820 基准，卡片统一 120×170）：**
+
+| 抽数 | 布局 |
+|------|------|
+| 单抽 | 1 张居中（630, 300） |
+| 十连 | 2 行 × 5 列，水平间距 40，垂直间距 60，整体居中（起点约 x=330, y=180） |
+
+**每张卡的状态机：**
+
+```
+BACK（牌背，可点击）→ FLIPPING（翻转动画中，忽略点击）→ REVEALED（正面，若 isJackpot 则持续金光）
+```
+
+**实现要点：**
+
+1. **数据结构**：内部类 `RevealCard { Reward reward; Rectangle bounds; CardState state; double progress; }`，`GachaRevealPanel` 持有 `List<RevealCard>`
+2. **点击判定**：`MouseListener` 中遍历 `bounds.contains(e.getPoint())` 且 `state == BACK` 的卡，触发翻转
+3. **翻转动画**：共用一个 `javax.swing.Timer`（16ms），每帧 `progress += 16.0/300`（300ms 完成）；绘制时 `scaleX = |cos(progress·π)|`，前半段画 `gacha_card_back.png` 收窄，后半段画结果卡正面展开（正面图按奖励类型取 `gacha_card_tank/mod/resource.png`，居中绘制在 120×170 卡框内，下方叠加数量文字）
+4. **金光特效**：`state == REVEALED && isJackpot` 的卡，先画光再画卡——`gacha_light_2.png` 以卡中心为轴每帧旋转 +0.02 rad，alpha 以正弦在 0.6~1.0 呼吸；用 `AlphaComposite.SRC_OVER` + `Graphics2D.rotate` 实现。普通卡翻开瞬间可闪一次 `gacha_light_1.png`（约 200ms 淡出）
+5. **一键翻开**：右下角 `btn_flip_all.png` 按钮，点击后每隔 120ms 依次触发一张未翻卡的翻转（用计数器在同一 Timer 里调度，不要嵌套 Timer）
+6. **收尾**：所有卡 `REVEALED` 后，中下方显示"确认"按钮（复用通用按钮），点击移除覆盖层、回到 GachaPanel 并刷新资源栏与保底进度条
+7. **重绘策略**：Timer 每帧 `repaint()`；所有卡都翻开且无大奖在场时可停止 Timer（有大奖则保持运行以维持金光动画）
+
+**切入点**：第 14 步抽卡系统开发时一并实现，先做静态牌背布局与点击翻面（无动画），再补翻转动画与金光。
 
 ---
 

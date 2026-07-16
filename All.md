@@ -289,6 +289,7 @@ src/
 │       ├── TankSelectPanel.java # 坦克/地图选择
 │       ├── DevelopPanel.java  # 坦克养成界面
 │       ├── GachaPanel.java    # 坦克获取（抽卡）界面
+│       ├── GachaRevealPanel.java # 抽卡翻牌展示层（牌背翻转 + 大奖金光）
 │       └── PausePanel.java    # 暂停菜单
 │
 ├── model/
@@ -1417,6 +1418,55 @@ private Reward rollTankPool(int pityBonus) {
     return weightedRandom(weights);
 }
 ```
+
+**GachaResult / Reward 结构**：每个 `Reward` 必须携带 `isJackpot` 标记（坦克池 = 新坦克；改装池 = 四种碎片），供翻牌展示层决定是否叠加金光特效：
+
+```java
+public class Reward {
+    private RewardType type;     // 生铁 / 钢铁 / 新坦克 / 碎片
+    private int amount;
+    private boolean isJackpot;   // 是否目标大奖（新坦克 / 碎片）
+    private Image cardFace;      // 对应结果卡正面图
+}
+```
+
+**注意**：奖励在 `drawTank()` / `drawModification()` 返回前已全部结算并写入 `PlayerSaveData` 且自动保存，翻牌仅是**纯展示层交互**——中途关闭程序不会丢失奖励。
+
+### 5.10.1 抽卡翻牌展示流程（GachaRevealPanel）
+
+点击单抽/十连并结算成功后，不直接弹出结果列表，而是切入全屏翻牌展示层：
+
+```
+抽卡按钮 → GachaManager 结算+存档 → GachaRevealPanel(rewards)
+  1. 展示 N 张牌背（单抽 1 张居中；十连 2 行 × 5 列居中）
+  2. 玩家逐张点击 → 该卡播放翻转动画 → 显示结果卡正面
+  3. 若该卡 isJackpot → 正面亮出瞬间叠加金光特效（旋转 + 呼吸闪烁）
+  4. 提供"一键翻开"按钮：按间隔依次翻开所有未翻卡
+  5. 全部翻开后显示"确认"按钮 → 返回 GachaPanel 并刷新资源栏/保底进度条
+```
+
+**翻转动画（Swing 实现）**：用 `javax.swing.Timer`（约 16ms/帧）驱动卡片横向缩放模拟 3D 翻转，总时长约 300ms：
+
+```java
+// progress ∈ [0,1]；前半段画牌背收窄，后半段画正面展开
+double scaleX = Math.abs(Math.cos(progress * Math.PI)); // 1 → 0 → 1
+Image img = (progress < 0.5) ? cardBack : reward.getCardFace();
+int w = (int) (CARD_W * scaleX);
+g2d.drawImage(img, cx - w / 2, cy - CARD_H / 2, w, CARD_H, null);
+```
+
+**大奖金光特效**：卡片翻开完成后，在该卡背后持续绘制 `gacha_light_2.png`（金光），由同一 Timer 驱动：
+
+```java
+// 每帧更新：angle += 0.02（缓慢旋转），alpha 在 0.6~1.0 间正弦呼吸
+Graphics2D g2 = (Graphics2D) g.create();
+g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+g2.rotate(angle, cx, cy);
+g2.drawImage(goldenLight, cx - 200, cy - 200, 400, 400, null); // 先画光，再画卡
+g2.dispose();
+```
+
+**点击命中判定**：`GachaRevealPanel` 注册 `MouseListener`，用每张卡的 `Rectangle` 做 `contains(e.getPoint())` 判定，已翻开的卡忽略点击。
 
 ### 5.11 暂停系统
 

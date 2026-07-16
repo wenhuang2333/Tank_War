@@ -33,7 +33,7 @@ When Gson is added it will need to go on the classpath for both commands (e.g. `
 | `All.md` | **开发总文档**——完整架构、15+ 类详细设计、核心实现流程、碰撞/UI/异常处理方案 |
 | `PK.md` | **人机 AI 方案**——三层架构（感知→Utility AI决策→A*+势场执行）、三种难度参数表、射击预判算法 |
 | `data.md` | **JSON 存档数据结构**——PlayerSaveData 完整字段定义、Java 实体类、存档生命周期 |
-| `pic.md` | **图片资源清单**——约 183 张图片的命名、尺寸（以 1380×820 为基准）、目录结构 |
+| `pic.md` | **图片资源清单**——约 185 张图片的命名、尺寸（以 1380×820 为基准）、目录结构 |
 | `action.md` | **落地实施方案**——17 个模块的详细逻辑实现方案（Java Swing 可行）、开发顺序、每个模块的切入点和实现要点 |
 
 ## Key Rules
