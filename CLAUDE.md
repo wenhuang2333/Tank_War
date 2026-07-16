@@ -6,7 +6,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Tank Battle Game (坦克大战) — a Java Swing desktop game using MVC architecture with dual-threaded game loop (logic + render at 60 FPS). Window size: **1380×820**.
 
-**Tech stack**: Java (JDK), Swing, Gson (JSON serialization)
+**Tech stack**: Java (JDK), Swing, Gson (JSON serialization — planned, not yet added to the project; no `lib/` directory exists)
+
+**Current state**: only `src/main/Main.java` exists (a placeholder welcome window). All other classes in the Architecture section below are planned, not implemented. Resource images (`resource/image/`) and maps (`resource/map-data/`) are already in place.
+
+## Build & Run
+
+Plain IntelliJ IDEA project (`softwar_Training.iml`) — no Maven/Gradle, no tests. From the repo root:
+
+```bash
+# Compile (all sources under src/, output to out/production/softwar_Training)
+javac -encoding UTF-8 -d out/production/softwar_Training $(find src -name "*.java")
+
+# Run
+java -cp out/production/softwar_Training main.Main
+```
+
+When Gson is added it will need to go on the classpath for both commands (e.g. `-cp "out/production/softwar_Training:lib/*"`).
 
 ## Mandatory Reference Documents
 
@@ -62,4 +78,4 @@ All visible entities extend `SuperElement` (abstract: `show()`, `move()`, `updat
 | Control | `thread` | `GameThread`, AI controllers (`thread/ai/`) |
 | Model | `model.vo`, `model.load`, `model.manager` | `SuperElement`, `Players`, `Bullet`, `ElementManager`, `ElementFactory`, `SaveManager` |
 
-Map files: `resource/data/*.map` — semicolon-separated `BRICK=x,y` / `IRON=x,y` entries.
+Map files: `resource/map-data/*.map` (1.map–10.map) — semicolon-separated `BRICK=x,y` / `IRON=x,y` entries.
