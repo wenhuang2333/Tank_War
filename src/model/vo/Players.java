@@ -53,6 +53,7 @@ public class Players extends SuperElement {
 
     protected boolean explosionProofUsed;
     protected long invincibleUntil;
+    protected int playerNumber;
 
     private boolean movingForward;
     private boolean movingBackward;
@@ -288,6 +289,9 @@ public class Players extends SuperElement {
     public void takeDamage(int rawDamage) {
         long now = System.currentTimeMillis();
         if (now < invincibleUntil) return;
+
+        if (playerNumber == 1 && util.GameContext.cheatP1Invincible) return;
+        if (playerNumber == 2 && util.GameContext.cheatP2Invincible) return;
 
         float reduction = getDamageReduction();
         int actualDamage = rawDamage - (int)(defense * reduction);
@@ -555,4 +559,6 @@ public class Players extends SuperElement {
     public void setExplosionProofUsed(boolean u) { this.explosionProofUsed = u; }
     public long getInvincibleUntil() { return invincibleUntil; }
     public void setInvincibleUntil(long t) { this.invincibleUntil = t; }
+    public int getPlayerNumber() { return playerNumber; }
+    public void setPlayerNumber(int n) { this.playerNumber = n; }
 }

@@ -119,6 +119,7 @@ public class MyGameJPanel extends JPanel {
         player1.setDirection(90);
         player1.resetBattleState();
         player1.setVisible(true);
+        player1.setPlayerNumber(1);
         em.addElement("players", player1);
 
         if (player2 instanceof Boss) {
@@ -128,6 +129,7 @@ public class MyGameJPanel extends JPanel {
             boss.setDirection(270);
             boss.resetBattleState();
             boss.setVisible(true);
+            boss.setPlayerNumber(2);
             switch (difficulty) {
                 case "hard": boss.setAi(new HardAI()); break;
                 case "super": boss.setAi(new SuperAI()); break;
@@ -140,6 +142,7 @@ public class MyGameJPanel extends JPanel {
             player2.setDirection(270);
             player2.resetBattleState();
             player2.setVisible(true);
+            player2.setPlayerNumber(2);
             em.addElement("players", player2);
         }
     }

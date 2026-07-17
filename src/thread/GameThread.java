@@ -15,6 +15,7 @@ public class GameThread extends Thread {
     private long startTime;
     private int matchDuration;
     private long remainingTime;
+    private long lastPenaltyTime;
 
     public GameThread(int matchDuration) {
         this.running = true;
@@ -127,6 +128,24 @@ public class GameThread extends Thread {
         boolean p2Alive = p2.isVisible();
 
         if (remainingTime <= 0) {
+            if (GameContext.overtimePenalty && p1Alive && p2Alive) {
+                long now = System.currentTimeMillis();
+                if (lastPenaltyTime == 0) lastPenaltyTime = now;
+                if (now - lastPenaltyTime >= 1000) {
+                    lastPenaltyTime = now;
+                    int dmg = 20;
+                    p1.setHp(Math.max(0, p1.getHp() - dmg));
+                    p2.setHp(Math.max(0, p2.getHp() - dmg));
+                    p1.setDamageReceived(p1.getDamageReceived() + dmg);
+                    p2.setDamageReceived(p2.getDamageReceived() + dmg);
+                    if (p1.getHp() <= 0) { p1.setVisible(false); p1Alive = false; }
+                    if (p2.getHp() <= 0) { p2.setVisible(false); p2Alive = false; }
+                } else {
+                    return;
+                }
+            }
+            if (GameContext.overtimePenalty && p1Alive && p2Alive) return;
+
             running = false;
             GameContext.battleEnded = true;
             if (p1Alive && p2Alive) {

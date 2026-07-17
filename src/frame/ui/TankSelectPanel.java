@@ -36,6 +36,7 @@ public class TankSelectPanel extends BasePanel {
     private boolean selectingP2;
     private JLabel mapLabel, tankLabel, tank2Label;
     private JComboBox<String> difficultyCombo;
+    private List<Integer> ownedTankIds;
 
     public TankSelectPanel(MyJFrame frame) {
         super(frame);
@@ -48,6 +49,7 @@ public class TankSelectPanel extends BasePanel {
 
     @Override
     protected JComponent buildContent() {
+        initOwnedTanks();
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.DARK_GRAY);
 
@@ -92,8 +94,8 @@ public class TankSelectPanel extends BasePanel {
         tankLabel.setForeground(Color.WHITE);
         JButton prevTank = createImageButton(ResourceManager.COMMON_ARROW_LEFT, 36, 36);
         JButton nextTank = createImageButton(ResourceManager.COMMON_ARROW_RIGHT, 36, 36);
-        prevTank.addActionListener(e -> { selectedPlayerTank = Math.max(1, selectedPlayerTank - 1); updateLabels(); updateTankIcon(tankIconLabel, selectedPlayerTank); });
-        nextTank.addActionListener(e -> { selectedPlayerTank = Math.min(8, selectedPlayerTank + 1); updateLabels(); updateTankIcon(tankIconLabel, selectedPlayerTank); });
+        prevTank.addActionListener(e -> { selectedPlayerTank = prevOwned(selectedPlayerTank); updateLabels(); updateTankIcon(tankIconLabel, selectedPlayerTank); });
+        nextTank.addActionListener(e -> { selectedPlayerTank = nextOwned(selectedPlayerTank); updateLabels(); updateTankIcon(tankIconLabel, selectedPlayerTank); });
         tank1Panel.add(prevTank);
         tank1Panel.add(tankIconLabel);
         tank1Panel.add(nextTank);
@@ -118,8 +120,8 @@ public class TankSelectPanel extends BasePanel {
             JButton prevTank2 = createImageButton(ResourceManager.COMMON_ARROW_LEFT, 36, 36);
             JButton nextTank2 = createImageButton(ResourceManager.COMMON_ARROW_RIGHT, 36, 36);
             final JLabel t2IconRef = tank2IconLabel;
-            prevTank2.addActionListener(e -> { selectedPlayer2Tank = Math.max(1, selectedPlayer2Tank - 1); updateLabels(); updateTankIcon(t2IconRef, selectedPlayer2Tank); });
-            nextTank2.addActionListener(e -> { selectedPlayer2Tank = Math.min(8, selectedPlayer2Tank + 1); updateLabels(); updateTankIcon(t2IconRef, selectedPlayer2Tank); });
+            prevTank2.addActionListener(e -> { selectedPlayer2Tank = prevOwned(selectedPlayer2Tank); updateLabels(); updateTankIcon(t2IconRef, selectedPlayer2Tank); });
+            nextTank2.addActionListener(e -> { selectedPlayer2Tank = nextOwned(selectedPlayer2Tank); updateLabels(); updateTankIcon(t2IconRef, selectedPlayer2Tank); });
             tank2Panel.add(prevTank2);
             tank2Panel.add(tank2IconLabel);
             tank2Panel.add(nextTank2);
@@ -210,6 +212,32 @@ public class TankSelectPanel extends BasePanel {
     }
 
     private boolean isPvp() { return "pvp".equals(GameContext.battleMode); }
+
+    private void initOwnedTanks() {
+        ownedTankIds = new ArrayList<>();
+        if (GameContext.currentSave == null || GameContext.currentSave.getOwnedTanks() == null) return;
+        for (PlayerSaveData.OwnedTank ot : GameContext.currentSave.getOwnedTanks()) {
+            ownedTankIds.add(ot.getTankId());
+        }
+        if (!ownedTankIds.isEmpty()) {
+            selectedPlayerTank = ownedTankIds.get(0);
+            selectedPlayer2Tank = ownedTankIds.size() > 1 ? ownedTankIds.get(1) : ownedTankIds.get(0);
+        }
+    }
+
+    private int nextOwned(int currentId) {
+        if (ownedTankIds.isEmpty()) return currentId;
+        int idx = ownedTankIds.indexOf(currentId);
+        if (idx < 0 || idx >= ownedTankIds.size() - 1) return ownedTankIds.get(0);
+        return ownedTankIds.get(idx + 1);
+    }
+
+    private int prevOwned(int currentId) {
+        if (ownedTankIds.isEmpty()) return currentId;
+        int idx = ownedTankIds.indexOf(currentId);
+        if (idx <= 0) return ownedTankIds.get(ownedTankIds.size() - 1);
+        return ownedTankIds.get(idx - 1);
+    }
 
     private void updateLabels() {
         String[] mapNames = {"", "开阔平原", "中门对狙", "迷宫回廊", "长枪直道", "十字要冲", "回字堡垒"};

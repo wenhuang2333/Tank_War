@@ -14,6 +14,13 @@ import java.util.ArrayList;
 public class CollisionUtil {
 
     public static boolean wouldCollideWithWall(int newX, int newY, int width, int height, SuperElement self) {
+        // Wall pass cheat
+        if (self instanceof Players) {
+            int pn = ((Players) self).getPlayerNumber();
+            if (pn == 1 && GameContext.cheatP1WallPass) return false;
+            if (pn == 2 && GameContext.cheatP2WallPass) return false;
+        }
+
         ElementManager em = ElementManager.getInstance();
         java.awt.Rectangle newRect = new java.awt.Rectangle(newX, newY, width, height);
 
@@ -67,7 +74,7 @@ public class CollisionUtil {
                         } else {
                             b.destroy();
                         }
-                    } else if (b.isRebound()) {
+                    } else if (b.isRebound() || GameContext.cheatBulletRebound) {
                         b.rebound();
                     } else {
                         b.destroy();
@@ -90,7 +97,8 @@ public class CollisionUtil {
 
             for (SuperElement pe : players) {
                 Players p = (Players) pe;
-                if (!p.isVisible() || p == b.getOwner()) continue;
+                if (!p.isVisible()) continue;
+                if (!GameContext.cheatFriendlyFire && p == b.getOwner()) continue;
                 if (b.isLaser()) {
                     if (laserIntersectsTank(b, p)) {
                         handleBulletHit(b, p);
@@ -105,7 +113,8 @@ public class CollisionUtil {
 
             for (SuperElement be2 : bosses) {
                 Players boss = (Players) be2;
-                if (!boss.isVisible() || boss == b.getOwner()) continue;
+                if (!boss.isVisible()) continue;
+                if (!GameContext.cheatFriendlyFire && boss == b.getOwner()) continue;
                 if (b.isLaser()) {
                     if (laserIntersectsTank(b, boss)) {
                         handleBulletHit(b, boss);

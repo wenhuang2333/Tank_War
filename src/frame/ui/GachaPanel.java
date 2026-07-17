@@ -14,6 +14,7 @@ import frame.MyJFrame;
 import model.manager.GachaManager;
 import model.manager.SaveManager;
 import model.vo.PlayerSaveData;
+import model.vo.Modification;
 import util.GameContext;
 import util.ResourceManager;
 
@@ -141,9 +142,20 @@ public class GachaPanel extends BasePanel {
             JOptionPane.showMessageDialog(frame, "通用碎片不足50个！", "提示", JOptionPane.WARNING_MESSAGE);
             return;
         }
+        // Let user choose which equipment type to craft
+        String[] modTypes = new String[Modification.Type.values().length];
+        for (int i = 0; i < Modification.Type.values().length; i++) {
+            modTypes[i] = Modification.Type.values()[i].getChineseName();
+        }
+        String choice = (String) JOptionPane.showInputDialog(frame,
+            "选择要合成的装备类型 (消耗50通用碎片):", "通用碎片合成",
+            JOptionPane.PLAIN_MESSAGE, null, modTypes, modTypes[0]);
+        if (choice == null) return;
+
         GameContext.currentSave.getModificationInv().setUniversalFragments(universal - 50);
+        GameContext.currentSave.getModificationInv().getCraftedEquipments().add(choice);
         SaveManager.getInstance().save(GameContext.currentSave);
-        JOptionPane.showMessageDialog(frame, "合成成功！装备已加入库存", "成功", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(frame, "合成成功！获得 " + choice, "成功", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void showFragmentCraft() {
