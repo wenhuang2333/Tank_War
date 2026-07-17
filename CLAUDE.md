@@ -8,21 +8,21 @@ Tank Battle Game (坦克大战) — a Java Swing desktop game using MVC architec
 
 **Tech stack**: Java (JDK), Swing, Gson (JSON serialization — planned, not yet added to the project; no `lib/` directory exists)
 
-**Current state**: only `src/main/Main.java` exists (a placeholder welcome window). All other classes in the Architecture section below are planned, not implemented. Resource images (`resource/image/`) and maps (`resource/map-data/`) are already in place.
+**Current state**: `src/` is empty (no `.java` files yet). All classes in the Architecture section are planned, not implemented. Resources are ready: `resource/image/` (17 subdirectories, ~185 PNGs), `resource/map-now-data/` (6 formal `.map` files, 40px grid). Dependencies not yet added: `lib/` directory doesn't exist — needs `gson-2.10.1.jar` and `commons-collections4-4.4.jar`.
 
 ## Build & Run
 
-Plain IntelliJ IDEA project (`softwar_Training.iml`) — no Maven/Gradle, no tests. From the repo root:
+Plain IntelliJ IDEA project (`softwar_Training.iml`) — no Maven/Gradle, no tests. Dependencies (`lib/`): needs `gson-2.10.1.jar` and `commons-collections4-4.4.jar`.
 
 ```bash
 # Compile (all sources under src/, output to out/production/softwar_Training)
 javac -encoding UTF-8 -d out/production/softwar_Training $(find src -name "*.java")
 
-# Run
-java -cp out/production/softwar_Training main.Main
+# Run (with dependencies and resources on classpath)
+java -cp "out/production/softwar_Training:lib/*:resource" main.Main
 ```
 
-When Gson is added it will need to go on the classpath for both commands (e.g. `-cp "out/production/softwar_Training:lib/*"`).
+When `src/` is empty (no `.java` files yet), the compile command will error — that's expected. Dependencies must be added to `lib/` before compilation.
 
 ## Mandatory Reference Documents
 
@@ -44,6 +44,8 @@ When Gson is added it will need to go on the classpath for both commands (e.g. `
    ```
 2. 开发前先阅读上述五份参考文档，动手前先查阅 `action.md` 对应模块的实现方案
 3. 速度换算标准（定义在 `All.md` 4.10.1）：坦克实际移速 = 设计值 × 0.04，子弹 = 设计值 × 0.06，转向 = 设计值 × 0.01（均为 60 FPS 下 px/frame 或 rad/frame）
+4. 开发顺序遵循 `action.md` 第二十二章的 17 步计划，当前处于第 1 步（项目骨架）之前
+5. 所有新类必须放在对应包路径下：`src/main/`（入口）、`src/frame/`（视图）、`src/model/vo/|load/|manager/`（模型）、`src/thread/|ai/`（控制）、`src/util/`（工具）
 
 ## Git Push 故障排查
 
@@ -78,4 +80,25 @@ All visible entities extend `SuperElement` (abstract: `show()`, `move()`, `updat
 | Control | `thread` | `GameThread`, AI controllers (`thread/ai/`) |
 | Model | `model.vo`, `model.load`, `model.manager` | `SuperElement`, `Players`, `Bullet`, `ElementManager`, `ElementFactory`, `SaveManager` |
 
-Map files: `resource/map-now-data/*.map`（正式地图 1.map–6.map，40px 网格，含 `#` 注释行）— semicolon-separated `BRICK=x,y` / `IRON=x,y` entries. Coordinate system: 地图区 1080×680 居中（偏移 150,70），详见 `action.md` 7.1。`resource/map-data/` 为旧 20px 网格样例，不再使用。
+Map files: `resource/map-now-data/*.map`（正式地图 1.map–6.map，40px 网格，含 `#` 注释行）— semicolon-separated `BRICK=x,y` / `IRON=x,y` entries. `resource/map-data/` 为旧 20px 网格样例，不再使用。
+
+### Coordinate System Quick Reference
+
+| Item | Value |
+|------|-------|
+| Window | 1380 × 820 |
+| Map area | 1080 × 680, centered with offset (150, 70) |
+| Tile size | 40 × 40 px |
+| Grid | 27 cols × 17 rows |
+| Boundary iron | Automatically generated on outermost ring (x=150/x=1190, y=70/y=710) — NOT in `.map` files |
+| Inner usable grid | 25 cols × 15 rows: `x = 190 + col×40` (col 0–24), `y = 110 + row×40` (row 0–14) |
+| P1 spawn | (191, 391) — left side, center row |
+| P2 spawn | (1151, 391) — right side, center row |
+| Tank render size | 38 × 38, centered in 40 × 40 tile |
+
+`.map` file format (in `resource/map-now-data/`):
+```
+# comment lines starting with # are ignored
+BRICK=310,150;350,150;390,150;...
+IRON=430,350;910,350;...
+```
