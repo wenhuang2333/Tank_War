@@ -15,6 +15,7 @@ import model.manager.GachaManager;
 import model.manager.SaveManager;
 import model.vo.PlayerSaveData;
 import util.GameContext;
+import util.ResourceManager;
 
 public class GachaPanel extends BasePanel {
     private JLabel infoLabel;
@@ -26,6 +27,11 @@ public class GachaPanel extends BasePanel {
             GameContext.currentSave != null ? GameContext.currentSave.getGachaState().getTankPool().getPityCounter() : 0,
             GameContext.currentSave != null ? GameContext.currentSave.getGachaState().getModPool().getPityCounter() : 0
         );
+    }
+
+    @Override
+    protected String getBackgroundImagePath() {
+        return ResourceManager.GACHA_BG;
     }
 
     @Override

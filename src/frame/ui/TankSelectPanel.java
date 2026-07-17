@@ -23,6 +23,7 @@ import thread.ai.HardAI;
 import thread.ai.SuperAI;
 import util.GameConfig;
 import util.GameContext;
+import util.ResourceManager;
 
 public class TankSelectPanel extends BasePanel {
     private int selectedMap = 1;
@@ -34,6 +35,11 @@ public class TankSelectPanel extends BasePanel {
 
     public TankSelectPanel(MyJFrame frame) {
         super(frame);
+    }
+
+    @Override
+    protected String getBackgroundImagePath() {
+        return ResourceManager.SELECT_BG;
     }
 
     @Override

@@ -1,23 +1,33 @@
 package model.vo;
 
 import java.awt.Graphics2D;
-import java.awt.Color;
+import java.awt.image.BufferedImage;
+import model.load.ElementLoad;
+import util.ResourceManager;
 
 public class Background extends SuperElement {
+    private BufferedImage bgImage;
+    private BufferedImage tileImage;
+
     public Background(int x, int y, int width, int height) {
         super(x, y, width, height);
+        ElementLoad el = ElementLoad.getInstance();
+        bgImage = el.getImage(ResourceManager.BATTLE_BG);
+        tileImage = el.getImage(ResourceManager.TILE_GROUND);
     }
 
     @Override
     public void show(Graphics2D g) {
-        g.setColor(new Color(30, 30, 30));
-        g.fillRect(x, y, width, height);
-        g.setColor(new Color(50, 50, 50));
-        for (int row = 0; row <= height / 40; row++) {
-            g.drawLine(x, y + row * 40, x + width, y + row * 40);
+        if (bgImage != null) {
+            g.drawImage(bgImage, 0, 0, 1380, 820, null);
         }
-        for (int col = 0; col <= width / 40; col++) {
-            g.drawLine(x + col * 40, y, x + col * 40, y + height);
+        if (tileImage != null) {
+            int tileSize = 40;
+            for (int row = 0; row <= height / tileSize; row++) {
+                for (int col = 0; col <= width / tileSize; col++) {
+                    g.drawImage(tileImage, x + col * tileSize, y + row * tileSize, tileSize, tileSize, null);
+                }
+            }
         }
     }
 

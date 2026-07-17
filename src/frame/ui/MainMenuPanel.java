@@ -15,10 +15,16 @@ import java.io.File;
 import frame.MyJFrame;
 import model.manager.SaveManager;
 import util.GameContext;
+import util.ResourceManager;
 
 public class MainMenuPanel extends BasePanel {
     public MainMenuPanel(MyJFrame frame) {
         super(frame);
+    }
+
+    @Override
+    protected String getBackgroundImagePath() {
+        return ResourceManager.MENU_BG;
     }
 
     @Override

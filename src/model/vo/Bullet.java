@@ -3,7 +3,10 @@ package model.vo;
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.BasicStroke;
+import java.awt.image.BufferedImage;
+import model.load.ElementLoad;
 import util.GameConfig;
+import util.ResourceManager;
 
 public class Bullet extends SuperElement {
     private int speed;
@@ -31,17 +34,39 @@ public class Bullet extends SuperElement {
     public void show(Graphics2D g) {
         if (!visible) return;
         if (isLaser) {
-            g.setColor(new Color(255, 50, 50, 200));
-            g.setStroke(new BasicStroke(3));
-            g.drawLine(x, y, laserEndX, laserEndY);
-            g.setColor(new Color(255, 200, 100, 100));
-            g.setStroke(new BasicStroke(7));
-            g.drawLine(x, y, laserEndX, laserEndY);
+            BufferedImage beamImg = ElementLoad.getInstance().getImage(ResourceManager.LASER_BEAM);
+            if (beamImg != null && beamImg.getWidth() > 6) {
+                double rad = Math.toRadians(direction);
+                int dx = laserEndX - x;
+                int dy = laserEndY - y;
+                double dist = Math.sqrt(dx * dx + dy * dy);
+                java.awt.geom.AffineTransform old = g.getTransform();
+                g.translate(x, y);
+                g.rotate(rad);
+                int segW = 6;
+                for (int i = 0; i < (int)dist; i += segW) {
+                    int segH = Math.min(segW, (int)dist - i);
+                    g.drawImage(beamImg, i, -3, segH, 6, null);
+                }
+                g.setTransform(old);
+            } else {
+                g.setColor(new Color(255, 50, 50, 200));
+                g.setStroke(new BasicStroke(3));
+                g.drawLine(x, y, laserEndX, laserEndY);
+                g.setColor(new Color(255, 200, 100, 100));
+                g.setStroke(new BasicStroke(7));
+                g.drawLine(x, y, laserEndX, laserEndY);
+            }
         } else {
-            g.setColor(new Color(255, 255, 100));
-            g.fillOval(x - width / 2, y - height / 2, width, height);
-            g.setColor(new Color(255, 200, 50));
-            g.fillOval(x - width / 4, y - height / 4, width / 2, height / 2);
+            BufferedImage bulletImg = ElementLoad.getInstance().getImage(ResourceManager.BULLET_ALL);
+            if (bulletImg != null && bulletImg.getWidth() > 8) {
+                g.drawImage(bulletImg, x - width / 2, y - height / 2, width, height, null);
+            } else {
+                g.setColor(new Color(255, 255, 100));
+                g.fillOval(x - width / 2, y - height / 2, width, height);
+                g.setColor(new Color(255, 200, 50));
+                g.fillOval(x - width / 4, y - height / 4, width / 2, height / 2);
+            }
         }
     }
 

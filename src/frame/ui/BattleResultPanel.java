@@ -13,10 +13,16 @@ import frame.MyJFrame;
 import model.manager.SaveManager;
 import model.vo.PlayerSaveData;
 import util.GameContext;
+import util.ResourceManager;
 
 public class BattleResultPanel extends BasePanel {
     public BattleResultPanel(MyJFrame frame) {
         super(frame);
+    }
+
+    @Override
+    protected String getBackgroundImagePath() {
+        return GameContext.playerWin ? ResourceManager.RESULT_VICTORY : ResourceManager.RESULT_DEFEAT;
     }
 
     @Override

@@ -21,10 +21,16 @@ import frame.MyJFrame;
 import model.manager.SaveManager;
 import model.vo.PlayerSaveData;
 import util.GameContext;
+import util.ResourceManager;
 
 public class LoginPanel extends BasePanel {
     public LoginPanel(MyJFrame frame) {
         super(frame);
+    }
+
+    @Override
+    protected String getBackgroundImagePath() {
+        return ResourceManager.LOGIN_BG;
     }
 
     @Override

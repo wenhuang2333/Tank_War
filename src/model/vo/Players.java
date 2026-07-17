@@ -3,14 +3,17 @@ package model.vo;
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.BasicStroke;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 import model.manager.ElementManager;
 import model.manager.ElementFactory;
+import model.load.ElementLoad;
 import util.CollisionUtil;
 import util.GameConfig;
+import util.ResourceManager;
 
 public class Players extends SuperElement {
     protected String customName;
@@ -130,18 +133,38 @@ public class Players extends SuperElement {
         java.awt.geom.AffineTransform old = g.getTransform();
         g.rotate(Math.toRadians(direction), cx, cy);
 
-        g.setColor(new Color(60, 120, 60));
-        g.fillRect(x, y, width, height);
-        g.setColor(new Color(80, 150, 80));
-        g.fillRect(x + 2, y + 2, width - 4, height - 4);
-        g.setColor(new Color(40, 90, 40));
-        g.fillRect(x + width / 2 - 4, y + 2, 8, 10);
+        BufferedImage tankImg = ElementLoad.getInstance().getImage(ResourceManager.tankBody(tankId));
+        // Check if image loaded successfully (not the magenta placeholder)
+        boolean hasImage = tankImg != null && tankImg.getWidth() > 40;
 
-        g.setColor(new Color(50, 50, 50));
-        int barrelW = 6;
-        g.fillRect(x + width / 2 - barrelW / 2, y - 8, barrelW, 16);
+        if (hasImage) {
+            g.drawImage(tankImg, x, y, width, height, null);
+        } else {
+            g.setColor(new Color(60, 120, 60));
+            g.fillRect(x, y, width, height);
+            g.setColor(new Color(80, 150, 80));
+            g.fillRect(x + 2, y + 2, width - 4, height - 4);
+            g.setColor(new Color(40, 90, 40));
+            g.fillRect(x + width / 2 - 4, y + 2, 8, 10);
+
+            g.setColor(new Color(50, 50, 50));
+            int barrelW = 6;
+            g.fillRect(x + width / 2 - barrelW / 2, y - 8, barrelW, 16);
+        }
 
         g.setTransform(old);
+
+        long now = System.currentTimeMillis();
+        if (now < invincibleUntil) {
+            BufferedImage shield = ElementLoad.getInstance().getImage(ResourceManager.SHIELD);
+            if (shield != null && shield.getWidth() > 10) {
+                g.drawImage(shield, x - 6, y - 6, width + 12, height + 12, null);
+            } else {
+                g.setColor(new Color(100, 200, 255, 120));
+                g.setStroke(new BasicStroke(3));
+                g.drawOval(x - 4, y - 4, width + 8, height + 8);
+            }
+        }
 
         if (installedMods != null) {
             for (int i = 0; i < installedMods.length; i++) {

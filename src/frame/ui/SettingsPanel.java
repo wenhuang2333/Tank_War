@@ -13,10 +13,16 @@ import java.awt.Font;
 import frame.MyJFrame;
 import model.manager.SaveManager;
 import util.GameContext;
+import util.ResourceManager;
 
 public class SettingsPanel extends BasePanel {
     public SettingsPanel(MyJFrame frame) {
         super(frame);
+    }
+
+    @Override
+    protected String getBackgroundImagePath() {
+        return ResourceManager.SETTINGS_BG;
     }
 
     @Override

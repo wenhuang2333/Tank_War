@@ -17,6 +17,7 @@ import model.vo.*;
 import model.manager.TankDataManager;
 import model.manager.SaveManager;
 import util.GameContext;
+import util.ResourceManager;
 
 public class DevelopPanel extends BasePanel {
     private int currentTankIndex;
@@ -25,6 +26,11 @@ public class DevelopPanel extends BasePanel {
     public DevelopPanel(MyJFrame frame) {
         super(frame);
         loadTanks();
+    }
+
+    @Override
+    protected String getBackgroundImagePath() {
+        return ResourceManager.TRAINING_BG;
     }
 
     private void loadTanks() {

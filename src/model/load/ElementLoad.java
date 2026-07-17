@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
 
+import util.ResourceManager;
+
 public class ElementLoad {
     private static ElementLoad instance;
     private Map<Integer, MapData> mapDataCache;
@@ -48,6 +50,24 @@ public class ElementLoad {
                 System.err.println("[WARN] Failed to load map " + i + ": " + e.getMessage());
             }
         }
+        preloadBattleImages();
+    }
+
+    private void preloadBattleImages() {
+        loadImage(ResourceManager.BATTLE_BG);
+        loadImage(ResourceManager.TILE_GROUND);
+        loadImage(ResourceManager.WALL_BRICK);
+        loadImage(ResourceManager.WALL_IRON);
+        loadImage(ResourceManager.BULLET_ALL);
+        String[] expFrames = ResourceManager.explosionFrames();
+        for (String frame : expFrames) {
+            loadImage(frame);
+        }
+        for (int i = 1; i <= 8; i++) {
+            loadImage(ResourceManager.tankBody(i));
+        }
+        loadImage(ResourceManager.LASER_BEAM);
+        loadImage(ResourceManager.SHIELD);
     }
 
     public MapData loadMap(int level) {
@@ -59,6 +79,7 @@ public class ElementLoad {
     }
 
     public BufferedImage loadImage(String path) {
+        if (path == null) return PLACEHOLDER;
         if (imageCache.containsKey(path)) return imageCache.get(path);
         try {
             File file = new File(path);
@@ -75,7 +96,7 @@ public class ElementLoad {
             imageCache.put(path, img);
             return img;
         } catch (IOException e) {
-            System.err.println("[WARN] Image load error: " + path);
+            System.err.println("[WARN] Image load error: " + path + " - " + e.getMessage());
             imageCache.put(path, PLACEHOLDER);
             return PLACEHOLDER;
         }
