@@ -297,13 +297,17 @@ public class Players extends SuperElement {
             hp = 1;
             invincibleUntil = now + 5000;
             explosionProofUsed = true;
-            durability = Math.max(0, durability - rawDamage);
+            if (!util.GameContext.cheatNoDurability) {
+                durability = Math.max(0, durability - rawDamage);
+            }
             damageReceived += rawDamage;
             return;
         }
 
         hp -= actualDamage;
-        durability = Math.max(0, durability - rawDamage);
+        if (!util.GameContext.cheatNoDurability) {
+            durability = Math.max(0, durability - rawDamage);
+        }
         damageReceived += rawDamage;
 
         if (hp <= 0) {
@@ -441,6 +445,53 @@ public class Players extends SuperElement {
         shotsFired = 0;
         damageDealt = 0;
         damageReceived = 0;
+        durability = maxDurability;
+        hp = maxHp;
+        isReloading = false;
+        ammo = maxAmmo;
+    }
+
+    public void applySaveData(PlayerSaveData.OwnedTank ot) {
+        if (ot == null) return;
+        this.rank = ot.getRank();
+        this.level = ot.getLevel();
+        this.customName = ot.getCustomName();
+        PlayerSaveData.CombatStats cs = ot.getCombatStats();
+        if (cs != null) {
+            this.hp = cs.getHp();
+            this.maxHp = cs.getHp();
+            this.attack = cs.getAttack();
+            this.defense = cs.getDefense();
+            this.speed = cs.getSpeed();
+            this.turnSpeed = cs.getTurnSpeed();
+            this.bulletSpeed = cs.getBulletSpeed();
+            this.fireRate = cs.getFireRate() * 1000;
+            this.bulletDuration = cs.getBulletDuration();
+            this.ammo = cs.getAmmo();
+            this.maxAmmo = cs.getAmmo();
+            this.reloadTime = cs.getReloadTime() * 1000;
+            this.durability = cs.getMaxDurability();
+            this.maxDurability = cs.getMaxDurability();
+        }
+        if (ot.getInstalledMods() != null) {
+            for (PlayerSaveData.InstalledMod im : ot.getInstalledMods()) {
+                if (im != null && im.getSlotIndex() < GameConfig.MOD_SLOTS) {
+                    try {
+                        Modification.Type type = Modification.Type.valueOf(im.getModType());
+                        Modification mod = new Modification(type, "CRAFTED_SPECIFIC".equals(im.getSource()));
+                        installMod(mod, im.getSlotIndex());
+                    } catch (IllegalArgumentException ignored) {}
+                }
+            }
+        }
+        if (ot.getCooldownSlots() != null) {
+            for (PlayerSaveData.CooldownSlot cs2 : ot.getCooldownSlots()) {
+                if (cs2 != null && cs2.getSlotIndex() < GameConfig.MOD_SLOTS) {
+                    cooldownSlots[cs2.getSlotIndex()] = cs2.getRemainingBattles();
+                }
+            }
+        }
+        checkUnlockModSlot();
     }
 
     // Getters and setters
@@ -450,7 +501,7 @@ public class Players extends SuperElement {
     public void setCustomName(String name) { this.customName = name; }
     public String getModelName() { return modelName; }
     public int getRank() { return rank; }
-    public void setRank(int rank) { this.rank = rank; }
+    public void setRank(int rank) { this.rank = rank; checkUnlockModSlot(); }
     public int getLevel() { return level; }
     public void setLevel(int level) { this.level = level; }
     public int getHp() { return hp; }

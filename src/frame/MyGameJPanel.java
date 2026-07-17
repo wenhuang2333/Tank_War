@@ -184,6 +184,21 @@ public class MyGameJPanel extends JPanel {
         int blueprintReward = difficulty.equals("hard") ? 2 : difficulty.equals("super") ? 3 : 1;
         r.setBlueprints(r.getBlueprints() + blueprintReward);
 
+        // Advance cooldowns on owned tanks after each battle
+        if (GameContext.currentSave.getOwnedTanks() != null) {
+            for (PlayerSaveData.OwnedTank ot : GameContext.currentSave.getOwnedTanks()) {
+                if (ot.getCooldownSlots() != null) {
+                    for (PlayerSaveData.CooldownSlot cs : ot.getCooldownSlots()) {
+                        if (cs != null && cs.getRemainingBattles() > 0) {
+                            cs.setRemainingBattles(cs.getRemainingBattles() - 1);
+                        }
+                    }
+                    // Remove completed cooldowns
+                    ot.getCooldownSlots().removeIf(cs -> cs == null || cs.getRemainingBattles() <= 0);
+                }
+            }
+        }
+
         if (GameContext.currentSave.getBattleHistory() != null) {
             PlayerSaveData.BattleHistory bh = GameContext.currentSave.getBattleHistory();
             bh.setTotalPlayed(bh.getTotalPlayed() + 1);

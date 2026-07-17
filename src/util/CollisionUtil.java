@@ -120,8 +120,13 @@ public class CollisionUtil {
     }
 
     private static void handleBulletHit(Bullet b, Players tank) {
-        boolean friendlyFire = (b.getOwner() instanceof model.vo.Boss) == (tank instanceof model.vo.Boss)
-            || (!(b.getOwner() instanceof model.vo.Boss) && !(tank instanceof model.vo.Boss));
+        boolean friendlyFire;
+        if ("pvp".equals(GameContext.battleMode)) {
+            friendlyFire = false;
+        } else {
+            friendlyFire = (b.getOwner() instanceof model.vo.Boss) == (tank instanceof model.vo.Boss)
+                || (!(b.getOwner() instanceof model.vo.Boss) && !(tank instanceof model.vo.Boss));
+        }
         if (friendlyFire && (b.getOwner() == null || b.getOwner().hasMod(Modification.Type.ANTI_FRIENDLY_FIRE))) {
             return;
         }

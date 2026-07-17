@@ -233,17 +233,29 @@ public class TankSelectPanel extends BasePanel {
 
         ElementFactory factory = ElementFactory.getInstance();
         Players p1 = factory.createPlayer(selectedPlayerTank, GameConfig.P1_SPAWN_X, GameConfig.P1_SPAWN_Y);
+        applySavedTankData(p1, selectedPlayerTank);
 
         boolean isPvp = "pvp".equals(GameContext.battleMode);
         int duration = isPvp ? GameContext.matchDuration : GameConfig.DEFAULT_MATCH_DURATION;
         if (isPvp) {
             Players p2 = factory.createPlayer(selectedPlayer2Tank, GameConfig.P2_SPAWN_X, GameConfig.P2_SPAWN_Y);
+            applySavedTankData(p2, selectedPlayer2Tank);
             frame.showGamePanel(p1, p2, selectedMap, "pvp", duration);
         } else {
             Boss boss = factory.createBoss(selectedBossTank, GameConfig.P2_SPAWN_X, GameConfig.P2_SPAWN_Y,
                 selectedDifficulty.equals("hard") ? new HardAI() :
                 selectedDifficulty.equals("super") ? new SuperAI() : new EasyAI());
             frame.showGamePanel(p1, boss, selectedMap, selectedDifficulty, duration);
+        }
+    }
+
+    private void applySavedTankData(Players p, int tankId) {
+        if (GameContext.currentSave == null) return;
+        for (PlayerSaveData.OwnedTank ot : GameContext.currentSave.getOwnedTanks()) {
+            if (ot.getTankId() == tankId) {
+                p.applySaveData(ot);
+                return;
+            }
         }
     }
 }
