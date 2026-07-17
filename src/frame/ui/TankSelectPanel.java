@@ -5,6 +5,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JComboBox;
+import javax.swing.ImageIcon;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import frame.MyJFrame;
+import model.load.ElementLoad;
 import model.vo.*;
 import model.manager.TankDataManager;
 import model.manager.ElementFactory;
@@ -49,58 +51,79 @@ public class TankSelectPanel extends BasePanel {
 
         JPanel center = new JPanel(new GridLayout(3, 1, 10, 10));
         center.setBackground(Color.DARK_GRAY);
-        center.setBorder(javax.swing.BorderFactory.createEmptyBorder(50, 200, 50, 200));
+        center.setBorder(javax.swing.BorderFactory.createEmptyBorder(30, 200, 30, 200));
 
+        // Map selection with thumbnail
         JPanel mapPanel = new JPanel();
         mapPanel.setBackground(Color.DARK_GRAY);
+        JLabel mapThumbLabel = new JLabel("", JLabel.CENTER);
+        mapThumbLabel.setPreferredSize(new Dimension(320, 220));
+        updateMapThumb(mapThumbLabel);
+        JButton prevMap = createImageButton(ResourceManager.COMMON_ARROW_LEFT, 36, 36);
+        JButton nextMap = createImageButton(ResourceManager.COMMON_ARROW_RIGHT, 36, 36);
+        prevMap.addActionListener(e -> { selectedMap = Math.max(1, selectedMap - 1); updateLabels(); updateMapThumb(mapThumbLabel); });
+        nextMap.addActionListener(e -> { selectedMap = Math.min(6, selectedMap + 1); updateLabels(); updateMapThumb(mapThumbLabel); });
         mapLabel = new JLabel("地图: 1 - 开阔平原", JLabel.CENTER);
         mapLabel.setFont(new Font("微软雅黑", Font.PLAIN, 20));
         mapLabel.setForeground(Color.WHITE);
-        JButton prevMap = new JButton("<");
-        JButton nextMap = new JButton(">");
-        prevMap.addActionListener(e -> { selectedMap = Math.max(1, selectedMap - 1); updateLabels(); });
-        nextMap.addActionListener(e -> { selectedMap = Math.min(6, selectedMap + 1); updateLabels(); });
         mapPanel.add(prevMap);
-        mapPanel.add(mapLabel);
+        mapPanel.add(mapThumbLabel);
         mapPanel.add(nextMap);
+        JPanel mapLabelRow = new JPanel();
+        mapLabelRow.setBackground(Color.DARK_GRAY);
+        mapLabelRow.add(mapLabel);
+        JPanel mapWrap = new JPanel(new BorderLayout());
+        mapWrap.setBackground(Color.DARK_GRAY);
+        mapWrap.add(mapPanel, BorderLayout.CENTER);
+        mapWrap.add(mapLabelRow, BorderLayout.SOUTH);
 
+        // Tank selection with icon
         JPanel tankPanel = new JPanel();
         tankPanel.setBackground(Color.DARK_GRAY);
+        JLabel tankIconLabel = new JLabel("", JLabel.CENTER);
+        tankIconLabel.setPreferredSize(new Dimension(140, 160));
+        updateTankIcon(tankIconLabel);
         tankLabel = new JLabel("我方坦克: 1 - 克伦威尔", JLabel.CENTER);
         tankLabel.setFont(new Font("微软雅黑", Font.PLAIN, 20));
         tankLabel.setForeground(Color.WHITE);
-        JButton prevTank = new JButton("<");
-        JButton nextTank = new JButton(">");
-        prevTank.addActionListener(e -> { selectedPlayerTank = Math.max(1, selectedPlayerTank - 1); updateLabels(); });
-        nextTank.addActionListener(e -> { selectedPlayerTank = Math.min(8, selectedPlayerTank + 1); updateLabels(); });
+        JButton prevTank = createImageButton(ResourceManager.COMMON_ARROW_LEFT, 36, 36);
+        JButton nextTank = createImageButton(ResourceManager.COMMON_ARROW_RIGHT, 36, 36);
+        prevTank.addActionListener(e -> { selectedPlayerTank = Math.max(1, selectedPlayerTank - 1); updateLabels(); updateTankIcon(tankIconLabel); });
+        nextTank.addActionListener(e -> { selectedPlayerTank = Math.min(8, selectedPlayerTank + 1); updateLabels(); updateTankIcon(tankIconLabel); });
         tankPanel.add(prevTank);
-        tankPanel.add(tankLabel);
+        tankPanel.add(tankIconLabel);
         tankPanel.add(nextTank);
+        JPanel tankLabelRow = new JPanel();
+        tankLabelRow.setBackground(Color.DARK_GRAY);
+        tankLabelRow.add(tankLabel);
 
+        // Difficulty
         JPanel diffPanel = new JPanel();
         diffPanel.setBackground(Color.DARK_GRAY);
         JLabel diffLabel = new JLabel("难度:", JLabel.CENTER);
         diffLabel.setFont(new Font("微软雅黑", Font.PLAIN, 20));
         diffLabel.setForeground(Color.WHITE);
-        difficultyCombo = new JComboBox<>(new DefaultComboBoxModel<>(new String[]{"简单", "困难", "超级"}));
-        difficultyCombo.setFont(new Font("微软雅黑", Font.PLAIN, 18));
-        difficultyCombo.addActionListener(e -> {
-            int idx = difficultyCombo.getSelectedIndex();
-            selectedDifficulty = idx == 0 ? "easy" : idx == 1 ? "hard" : "super";
-        });
+        JButton easyBtn = createImageButton(ResourceManager.SELECT_BTN_EASY, 180, 55);
+        JButton hardBtn = createImageButton(ResourceManager.SELECT_BTN_HARD, 180, 55);
+        JButton superBtn = createImageButton(ResourceManager.SELECT_BTN_SUPER, 180, 55);
+        easyBtn.addActionListener(e -> selectedDifficulty = "easy");
+        hardBtn.addActionListener(e -> selectedDifficulty = "hard");
+        superBtn.addActionListener(e -> selectedDifficulty = "super");
         diffPanel.add(diffLabel);
-        diffPanel.add(difficultyCombo);
+        diffPanel.add(easyBtn);
+        diffPanel.add(hardBtn);
+        diffPanel.add(superBtn);
 
-        center.add(mapPanel);
-        center.add(tankPanel);
+        JPanel tankWrap = new JPanel(new BorderLayout());
+        tankWrap.setBackground(Color.DARK_GRAY);
+        tankWrap.add(tankPanel, BorderLayout.CENTER);
+        tankWrap.add(tankLabelRow, BorderLayout.SOUTH);
+
+        center.add(mapWrap);
+        center.add(tankWrap);
         center.add(diffPanel);
 
-        JButton startBtn = new JButton("开始对战");
-        startBtn.setFont(new Font("微软雅黑", Font.BOLD, 24));
-        startBtn.setBackground(new Color(60, 120, 60));
-        startBtn.setForeground(Color.WHITE);
-        startBtn.setFocusPainted(false);
-        startBtn.setPreferredSize(new Dimension(200, 50));
+        JButton startBtn = createImageButton(ResourceManager.SELECT_BTN_START_BATTLE, 240, 70);
         startBtn.addActionListener(e -> startBattle());
 
         JPanel bottom = new JPanel();
@@ -110,6 +133,23 @@ public class TankSelectPanel extends BasePanel {
         panel.add(center, BorderLayout.CENTER);
         panel.add(bottom, BorderLayout.SOUTH);
         return panel;
+    }
+
+    private void updateMapThumb(JLabel label) {
+        java.awt.image.BufferedImage thumb = ElementLoad.getInstance().getImage(ResourceManager.mapThumb(selectedMap));
+        if (thumb != null && thumb.getWidth() > 10) {
+            label.setIcon(new ImageIcon(thumb.getScaledInstance(320, 220, java.awt.Image.SCALE_SMOOTH)));
+        }
+    }
+
+    private void updateTankIcon(JLabel label) {
+        String path = ResourceManager.tankBody(selectedPlayerTank);
+        java.awt.image.BufferedImage img = ElementLoad.getInstance().getImage(path);
+        if (img != null && img.getWidth() > 10) {
+            int displayW = Math.min(img.getWidth(), 120);
+            int displayH = Math.min(img.getHeight(), 100);
+            label.setIcon(new ImageIcon(img.getScaledInstance(displayW, displayH, java.awt.Image.SCALE_SMOOTH)));
+        }
     }
 
     private void updateLabels() {

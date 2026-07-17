@@ -45,35 +45,46 @@ public class GachaPanel extends BasePanel {
         updateInfo();
         panel.add(infoLabel, BorderLayout.NORTH);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 2, 20, 20));
-        buttonPanel.setBackground(Color.DARK_GRAY);
-        buttonPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(100, 250, 100, 250));
+        JPanel poolsPanel = new JPanel(new GridLayout(1, 2, 20, 20));
+        poolsPanel.setBackground(Color.DARK_GRAY);
+        poolsPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(50, 80, 50, 80));
 
-        JButton tankSingle = new JButton("抽坦克 (单抽 - 3 蓝图)");
+        // Tank pool
+        JPanel tankPool = new JPanel(new BorderLayout());
+        tankPool.setBackground(Color.DARK_GRAY);
+        JLabel tankPoolBg = createImageLabel(ResourceManager.GACHA_TANK_POOL_BG, 580, 520);
+        tankPoolBg.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 400));
+        JButton tankSingle = createImageButton(ResourceManager.GACHA_BTN_PULL_ONE, 200, 60);
         tankSingle.addActionListener(e -> drawTank(1));
-        JButton tankTen = new JButton("抽坦克 (十连 - 27 蓝图)");
+        JButton tankTen = createImageButton(ResourceManager.GACHA_BTN_PULL_TEN, 220, 60);
         tankTen.addActionListener(e -> drawTank(10));
-        JButton modSingle = new JButton("抽改装 (单抽 - 3 蓝图)");
+        tankPoolBg.add(tankSingle);
+        tankPoolBg.add(tankTen);
+        tankPool.add(tankPoolBg, BorderLayout.CENTER);
+        poolsPanel.add(tankPool);
+
+        // Mod pool
+        JPanel modPool = new JPanel(new BorderLayout());
+        modPool.setBackground(Color.DARK_GRAY);
+        JLabel modPoolBg = createImageLabel(ResourceManager.GACHA_MOD_POOL_BG, 580, 520);
+        modPoolBg.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 400));
+        JButton modSingle = createImageButton(ResourceManager.GACHA_BTN_PULL_ONE, 200, 60);
         modSingle.addActionListener(e -> drawMod(1));
-        JButton modTen = new JButton("抽改装 (十连 - 27 蓝图)");
+        JButton modTen = createImageButton(ResourceManager.GACHA_BTN_PULL_TEN, 220, 60);
         modTen.addActionListener(e -> drawMod(10));
+        modPoolBg.add(modSingle);
+        modPoolBg.add(modTen);
+        modPool.add(modPoolBg, BorderLayout.CENTER);
+        poolsPanel.add(modPool);
 
-        styleGachaButton(tankSingle);
-        styleGachaButton(tankTen);
-        styleGachaButton(modSingle);
-        styleGachaButton(modTen);
-
-        buttonPanel.add(tankSingle);
-        buttonPanel.add(tankTen);
-        buttonPanel.add(modSingle);
-        buttonPanel.add(modTen);
-
-        panel.add(buttonPanel, BorderLayout.CENTER);
+        panel.add(poolsPanel, BorderLayout.CENTER);
 
         JPanel resourcePanel = new JPanel();
         resourcePanel.setBackground(Color.DARK_GRAY);
         JButton craftSpecificBtn = new JButton("合成特定碎片 (25→装备)");
         JButton craftUniversalBtn = new JButton("合成通用碎片 (50→装备)");
+        craftSpecificBtn.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+        craftUniversalBtn.setFont(new Font("微软雅黑", Font.PLAIN, 16));
         resourcePanel.add(craftSpecificBtn);
         resourcePanel.add(craftUniversalBtn);
 

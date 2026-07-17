@@ -28,20 +28,20 @@ public class SettingsPanel extends BasePanel {
     @Override
     protected JComponent buildContent() {
         JPanel panel = new JPanel(new GridLayout(4, 2, 20, 20));
-        panel.setBackground(Color.DARK_GRAY);
+        panel.setOpaque(false);
         panel.setBorder(javax.swing.BorderFactory.createEmptyBorder(100, 200, 100, 200));
 
         JLabel bgmLabel = new JLabel("背景音乐音量:");
         bgmLabel.setFont(new Font("微软雅黑", Font.PLAIN, 18));
         bgmLabel.setForeground(Color.WHITE);
         JSlider bgmSlider = new JSlider(0, 100, 80);
-        bgmSlider.setBackground(Color.DARK_GRAY);
+        bgmSlider.setOpaque(false);
 
         JLabel sfxLabel = new JLabel("音效音量:");
         sfxLabel.setFont(new Font("微软雅黑", Font.PLAIN, 18));
         sfxLabel.setForeground(Color.WHITE);
         JSlider sfxSlider = new JSlider(0, 100, 100);
-        sfxSlider.setBackground(Color.DARK_GRAY);
+        sfxSlider.setOpaque(false);
 
         JLabel langLabel = new JLabel("语言:");
         langLabel.setFont(new Font("微软雅黑", Font.PLAIN, 18));

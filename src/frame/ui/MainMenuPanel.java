@@ -36,13 +36,24 @@ public class MainMenuPanel extends BasePanel {
         buttonPanel.setBackground(Color.DARK_GRAY);
         buttonPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(150, 200, 150, 200));
 
-        buttonPanel.add(createMenuButton("对战", () -> {
+        JButton battleBtn = createImageButton(ResourceManager.MENU_BTN_BATTLE, 260, 90);
+        battleBtn.addActionListener(e -> {
             GameContext.battleMode = "pve";
             frame.showTankSelect();
-        }));
-        buttonPanel.add(createMenuButton("坦克养成", () -> frame.showDevelopPanel()));
-        buttonPanel.add(createMenuButton("坦克获取", () -> frame.showGachaPanel()));
-        buttonPanel.add(createMenuButton("退出游戏", this::onExit));
+        });
+        buttonPanel.add(battleBtn);
+
+        JButton trainingBtn = createImageButton(ResourceManager.MENU_BTN_TRAINING, 260, 90);
+        trainingBtn.addActionListener(e -> frame.showDevelopPanel());
+        buttonPanel.add(trainingBtn);
+
+        JButton gachaBtn = createImageButton(ResourceManager.MENU_BTN_GACHA, 260, 90);
+        gachaBtn.addActionListener(e -> frame.showGachaPanel());
+        buttonPanel.add(gachaBtn);
+
+        JButton exitBtn = createImageButton(ResourceManager.MENU_BTN_EXIT_GAME, 260, 90);
+        exitBtn.addActionListener(e -> onExit());
+        buttonPanel.add(exitBtn);
 
         panel.add(buttonPanel, BorderLayout.CENTER);
         return panel;

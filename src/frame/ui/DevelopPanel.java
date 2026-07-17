@@ -5,6 +5,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.ImageIcon;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Color;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 import frame.MyJFrame;
+import model.load.ElementLoad;
 import model.vo.*;
 import model.manager.TankDataManager;
 import model.manager.SaveManager;
@@ -80,7 +82,22 @@ public class DevelopPanel extends BasePanel {
     protected JComponent buildContent() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.DARK_GRAY);
-        panel.add(buildTankList(), BorderLayout.WEST);
+
+        // Tank display area with background
+        JLabel tankDisplay = createImageLabel(ResourceManager.TRAINING_TANK_DISPLAY_BG, 320, 340);
+        tankDisplay.setLayout(new BorderLayout());
+        if (playerTanks != null && !playerTanks.isEmpty() && currentTankIndex < playerTanks.size()) {
+            Players tank = playerTanks.get(currentTankIndex);
+            java.awt.image.BufferedImage tankImg = ElementLoad.getInstance().getImage(
+                ResourceManager.tankBody(tank.getTankId()));
+            if (tankImg != null && tankImg.getWidth() > 10) {
+                JLabel tankPic = new JLabel(new ImageIcon(tankImg.getScaledInstance(280, 280, java.awt.Image.SCALE_SMOOTH)));
+                tankPic.setHorizontalAlignment(JLabel.CENTER);
+                tankDisplay.add(tankPic, BorderLayout.CENTER);
+            }
+        }
+        panel.add(tankDisplay, BorderLayout.WEST);
+
         panel.add(buildDetailPanel(), BorderLayout.CENTER);
         return panel;
     }
@@ -112,8 +129,13 @@ public class DevelopPanel extends BasePanel {
         }
 
         Players tank = playerTanks.get(currentTankIndex);
+
+        // Attribute panel with background
+        JLabel attrBg = createImageLabel(ResourceManager.TRAINING_ATTR_PANEL_BG, 800, 520);
+        attrBg.setLayout(new BorderLayout());
+
         JPanel infoPanel = new JPanel(new GridLayout(12, 2, 10, 5));
-        infoPanel.setBackground(Color.DARK_GRAY);
+        infoPanel.setOpaque(false);
         infoPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 40, 20, 40));
 
         addInfoRow(infoPanel, "名称:", tank.getCustomName());
@@ -127,17 +149,19 @@ public class DevelopPanel extends BasePanel {
         addInfoRow(infoPanel, "改装槽:", tank.getUnlockedSlots() + " 个");
         addInfoRow(infoPanel, "型号:", tank.computeModelName());
 
+        attrBg.add(infoPanel, BorderLayout.CENTER);
+
         JPanel actionPanel = new JPanel();
-        actionPanel.setBackground(Color.DARK_GRAY);
-        JButton upgradeBtn = new JButton("升级 (" + tank.getUpgradeCost() + " 粗铁)");
+        actionPanel.setOpaque(false);
+        JButton upgradeBtn = createImageButton(ResourceManager.TRAINING_BTN_UPGRADE, 200, 55);
         upgradeBtn.addActionListener(e -> onUpgrade(tank));
-        JButton evolveBtn = new JButton("进阶 (" + tank.getEvolveCost() + " 钢铁)");
+        JButton evolveBtn = createImageButton(ResourceManager.TRAINING_BTN_RANK_UP, 200, 55);
         evolveBtn.addActionListener(e -> onEvolve(tank));
         actionPanel.add(upgradeBtn);
         actionPanel.add(evolveBtn);
+        attrBg.add(actionPanel, BorderLayout.SOUTH);
 
-        panel.add(infoPanel, BorderLayout.CENTER);
-        panel.add(actionPanel, BorderLayout.SOUTH);
+        panel.add(attrBg, BorderLayout.CENTER);
         return panel;
     }
 

@@ -8,6 +8,7 @@ import java.awt.RenderingHints;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.KeyAdapter;
@@ -27,6 +28,7 @@ import thread.ai.HardAI;
 import thread.ai.SuperAI;
 import util.GameConfig;
 import util.GameContext;
+import util.ResourceManager;
 import java.awt.Point;
 
 public class MyGameJPanel extends JPanel {
@@ -300,41 +302,57 @@ public class MyGameJPanel extends JPanel {
         private GameThread gameThread;
         private int btnX, btnW, btnH;
         private int resumeY, restartY, endY;
+        private BufferedImage overlayBg;
+        private BufferedImage continueImg;
+        private BufferedImage restartImg;
+        private BufferedImage endImg;
 
         public PauseOverlay(JPanel parent, GameThread gameThread) {
             this.parent = parent;
             this.gameThread = gameThread;
-            btnW = 200;
-            btnH = 40;
+            btnW = 240;
+            btnH = 60;
             btnX = GameConfig.WINDOW_WIDTH / 2 - btnW / 2;
-            resumeY = GameConfig.WINDOW_HEIGHT / 2 - 80;
+            resumeY = GameConfig.WINDOW_HEIGHT / 2 - 100;
             restartY = GameConfig.WINDOW_HEIGHT / 2 - 20;
-            endY = GameConfig.WINDOW_HEIGHT / 2 + 40;
+            endY = GameConfig.WINDOW_HEIGHT / 2 + 60;
+
+            ElementLoad el = ElementLoad.getInstance();
+            overlayBg = el.getImage(ResourceManager.BATTLE_PAUSE_OVERLAY);
+            continueImg = el.getImage(ResourceManager.BATTLE_BTN_CONTINUE);
+            restartImg = el.getImage(ResourceManager.BATTLE_BTN_RESTART);
+            endImg = el.getImage(ResourceManager.BATTLE_BTN_END);
         }
 
         public void paint(Graphics2D g2d) {
-            g2d.setColor(new Color(0, 0, 0, 180));
-            g2d.fillRect(0, 0, GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT);
+            // Draw pause overlay background
+            if (overlayBg != null && overlayBg.getWidth() > 40) {
+                g2d.drawImage(overlayBg, 0, 0, GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT, null);
+            } else {
+                g2d.setColor(new Color(0, 0, 0, 180));
+                g2d.fillRect(0, 0, GameConfig.WINDOW_WIDTH, GameConfig.WINDOW_HEIGHT);
+            }
 
-            g2d.setColor(Color.WHITE);
-            g2d.setFont(new Font("微软雅黑", Font.BOLD, 36));
-            g2d.drawString("暂停", GameConfig.WINDOW_WIDTH / 2 - 40, GameConfig.WINDOW_HEIGHT / 2 - 120);
-
-            drawButton(g2d, btnX, resumeY, btnW, btnH, "继续");
-            drawButton(g2d, btnX, restartY, btnW, btnH, "重新开始");
-            drawButton(g2d, btnX, endY, btnW, btnH, "结束对战");
+            // Draw buttons
+            drawButtonImage(g2d, continueImg, btnX, resumeY, btnW, btnH, "继续");
+            drawButtonImage(g2d, restartImg, btnX, restartY, btnW, btnH, "重新开始");
+            drawButtonImage(g2d, endImg, btnX, endY, btnW, btnH, "结束对战");
         }
 
-        private void drawButton(Graphics2D g2d, int x, int y, int w, int h, String text) {
-            g2d.setColor(new Color(80, 80, 80));
-            g2d.fillRect(x, y, w, h);
-            g2d.setColor(Color.WHITE);
-            g2d.drawRect(x, y, w, h);
-            g2d.setFont(new Font("微软雅黑", Font.PLAIN, 18));
-            java.awt.FontMetrics fm = g2d.getFontMetrics();
-            int textX = x + (w - fm.stringWidth(text)) / 2;
-            int textY = y + (h + fm.getAscent()) / 2 - 2;
-            g2d.drawString(text, textX, textY);
+        private void drawButtonImage(Graphics2D g2d, BufferedImage img, int x, int y, int w, int h, String fallbackText) {
+            if (img != null && img.getWidth() > 10) {
+                g2d.drawImage(img, x, y, w, h, null);
+            } else {
+                g2d.setColor(new Color(80, 80, 80));
+                g2d.fillRect(x, y, w, h);
+                g2d.setColor(Color.WHITE);
+                g2d.drawRect(x, y, w, h);
+                g2d.setFont(new Font("微软雅黑", Font.PLAIN, 18));
+                java.awt.FontMetrics fm = g2d.getFontMetrics();
+                int textX = x + (w - fm.stringWidth(fallbackText)) / 2;
+                int textY = y + (h + fm.getAscent()) / 2 - 2;
+                g2d.drawString(fallbackText, textX, textY);
+            }
         }
 
         public boolean handleClick(int mx, int my) {

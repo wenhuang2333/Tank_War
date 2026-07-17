@@ -35,9 +35,9 @@ public class BattleResultPanel extends BasePanel {
         center.setBorder(javax.swing.BorderFactory.createEmptyBorder(80, 300, 80, 300));
 
         boolean win = GameContext.playerWin;
-        JLabel resultLabel = new JLabel(win ? "胜 利！" : "失 败！", JLabel.CENTER);
-        resultLabel.setFont(new Font("微软雅黑", Font.BOLD, 48));
-        resultLabel.setForeground(win ? new Color(50, 200, 50) : new Color(200, 50, 50));
+        JLabel resultLabel = createImageLabel(
+            win ? ResourceManager.RESULT_VICTORY_TEXT : ResourceManager.RESULT_DEFEAT_TEXT, 340, 90);
+        resultLabel.setHorizontalAlignment(JLabel.CENTER);
         center.add(resultLabel);
 
         PlayerSaveData.Resources r = GameContext.currentSave.getResources();
@@ -55,11 +55,7 @@ public class BattleResultPanel extends BasePanel {
         center.add(steelLabel);
         center.add(bpLabel);
 
-        JButton backBtn = new JButton("返回主菜单");
-        backBtn.setFont(new Font("微软雅黑", Font.BOLD, 22));
-        backBtn.setBackground(new Color(60, 100, 60));
-        backBtn.setForeground(Color.WHITE);
-        backBtn.setFocusPainted(false);
+        JButton backBtn = createImageButton(ResourceManager.RESULT_BTN_RETURN_MENU, 220, 60);
         backBtn.addActionListener(e -> {
             GameContext.isInBattle = false;
             frame.showMainMenu();

@@ -42,26 +42,19 @@ public class LoginPanel extends BasePanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new java.awt.Insets(10, 0, 10, 0);
 
-        JLabel title = new JLabel("坦克大战", JLabel.CENTER);
-        title.setFont(new Font("微软雅黑", Font.BOLD, 48));
-        title.setForeground(Color.WHITE);
-        panel.add(title, gbc);
+        // Logo
+        JLabel logoLabel = createImageLabel(ResourceManager.LOGIN_LOGO, 480, 140);
+        panel.add(logoLabel, gbc);
 
-        JButton loginBtn = new JButton("登录");
-        loginBtn.setFont(new Font("微软雅黑", Font.PLAIN, 20));
-        loginBtn.setPreferredSize(new Dimension(220, 50));
-        loginBtn.setBackground(new Color(60, 120, 60));
-        loginBtn.setForeground(Color.WHITE);
-        loginBtn.setFocusPainted(false);
+        // Login button with image
+        JButton loginBtn = createImageButton(ResourceManager.LOGIN_BTN_LOGIN_NORMAL,
+            ResourceManager.LOGIN_BTN_LOGIN_HOVER, 220, 60);
         loginBtn.addActionListener(e -> onLogin());
         panel.add(loginBtn, gbc);
 
-        JButton exitBtn = new JButton("退出");
-        exitBtn.setFont(new Font("微软雅黑", Font.PLAIN, 20));
-        exitBtn.setPreferredSize(new Dimension(220, 50));
-        exitBtn.setBackground(new Color(120, 60, 60));
-        exitBtn.setForeground(Color.WHITE);
-        exitBtn.setFocusPainted(false);
+        // Exit button with image
+        JButton exitBtn = createImageButton(ResourceManager.LOGIN_BTN_EXIT_NORMAL,
+            ResourceManager.LOGIN_BTN_EXIT_HOVER, 220, 60);
         exitBtn.addActionListener(e -> System.exit(0));
         panel.add(exitBtn, gbc);
 
