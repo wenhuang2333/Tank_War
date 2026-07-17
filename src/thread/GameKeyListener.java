@@ -58,6 +58,13 @@ public class GameKeyListener implements KeyListener {
             player2.setMovingBackward(pressedKeys.contains(KeyEvent.VK_DOWN));
             player2.setRotatingCCW(pressedKeys.contains(KeyEvent.VK_LEFT));
             player2.setRotatingCW(pressedKeys.contains(KeyEvent.VK_RIGHT));
+
+            if (pressedKeys.contains(KeyEvent.VK_ENTER)) {
+                player2.fire();
+            }
+            if (pressedKeys.contains(KeyEvent.VK_BACK_SPACE)) {
+                player2.reload();
+            }
         }
     }
 

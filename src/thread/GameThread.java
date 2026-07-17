@@ -80,6 +80,11 @@ public class GameThread extends Thread {
         List<SuperElement> players = em.getElements("players");
         List<SuperElement> bosses = em.getElements("boss");
 
+        if ("pvp".equals(GameContext.battleMode)) {
+            checkPvpWinCondition(players, em);
+            return;
+        }
+
         boolean playerAlive = players.stream().anyMatch(SuperElement::isVisible);
         boolean bossAlive = bosses.stream().anyMatch(SuperElement::isVisible);
 
@@ -102,6 +107,42 @@ public class GameThread extends Thread {
             GameContext.playerWin = false;
         }
         if (!bossAlive) {
+            running = false;
+            GameContext.battleEnded = true;
+            GameContext.playerWin = true;
+        }
+    }
+
+    private void checkPvpWinCondition(List<SuperElement> playerList, ElementManager em) {
+        Players p1 = null, p2 = null;
+        for (SuperElement e : playerList) {
+            if (e instanceof Players) {
+                if (p1 == null) p1 = (Players) e;
+                else { p2 = (Players) e; break; }
+            }
+        }
+        if (p1 == null || p2 == null) return;
+
+        boolean p1Alive = p1.isVisible();
+        boolean p2Alive = p2.isVisible();
+
+        if (remainingTime <= 0) {
+            running = false;
+            GameContext.battleEnded = true;
+            if (p1Alive && p2Alive) {
+                GameContext.playerWin = p1.getHp() > p2.getHp();
+            } else {
+                GameContext.playerWin = p1Alive;
+            }
+            return;
+        }
+
+        if (!p1Alive) {
+            running = false;
+            GameContext.battleEnded = true;
+            GameContext.playerWin = false;
+        }
+        if (!p2Alive) {
             running = false;
             GameContext.battleEnded = true;
             GameContext.playerWin = true;
