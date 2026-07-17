@@ -16,6 +16,7 @@ public class GameThread extends Thread {
     private int matchDuration;
     private long remainingTime;
     private long lastPenaltyTime;
+    private boolean overtimeTriggered;
 
     public GameThread(int matchDuration) {
         this.running = true;
@@ -128,6 +129,17 @@ public class GameThread extends Thread {
         boolean p2Alive = p2.isVisible();
 
         if (remainingTime <= 0) {
+            // Overtime mode: clear obstacles, reset 5-min timer once
+            if (GameContext.overtimeMode && !overtimeTriggered && p1Alive && p2Alive) {
+                clearObstaclesForOvertime(em);
+                matchDuration = 300;
+                startTime = System.currentTimeMillis();
+                remainingTime = 300 * 1000L;
+                overtimeTriggered = true;
+                return;
+            }
+
+            // Timeout penalty: periodic HP deduction
             if (GameContext.overtimePenalty && p1Alive && p2Alive) {
                 long now = System.currentTimeMillis();
                 if (lastPenaltyTime == 0) lastPenaltyTime = now;
@@ -166,6 +178,13 @@ public class GameThread extends Thread {
             GameContext.battleEnded = true;
             GameContext.playerWin = true;
         }
+    }
+
+    private void clearObstaclesForOvertime(ElementManager em) {
+        List<SuperElement> bricks = em.getElements("brick");
+        if (bricks != null) bricks.clear();
+        List<SuperElement> iron = em.getElements("iron");
+        if (iron != null) iron.clear();
     }
 
     public void pauseGame() { paused = true; }

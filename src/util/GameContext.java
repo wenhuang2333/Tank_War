@@ -25,4 +25,12 @@ public class GameContext {
     public static boolean cheatNoDurability;
     public static boolean cheatBulletRebound;
     public static boolean cheatFriendlyFire;
+
+    // P1/P2 attribute cheat modifiers (0 = no modification)
+    public static final AttributeMods cheatP1Mods = new AttributeMods();
+    public static final AttributeMods cheatP2Mods = new AttributeMods();
+
+    public static class AttributeMods {
+        public int hp, attack, defense, speed, turnSpeed, bulletSpeed, ammo, reloadTime, durability;
+    }
 }

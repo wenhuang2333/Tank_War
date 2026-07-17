@@ -120,6 +120,7 @@ public class MyGameJPanel extends JPanel {
         player1.resetBattleState();
         player1.setVisible(true);
         player1.setPlayerNumber(1);
+        applyAttrCheats(player1, GameContext.cheatP1Mods);
         em.addElement("players", player1);
 
         if (player2 instanceof Boss) {
@@ -130,6 +131,7 @@ public class MyGameJPanel extends JPanel {
             boss.resetBattleState();
             boss.setVisible(true);
             boss.setPlayerNumber(2);
+            applyAttrCheats(boss, GameContext.cheatP2Mods);
             switch (difficulty) {
                 case "hard": boss.setAi(new HardAI()); break;
                 case "super": boss.setAi(new SuperAI()); break;
@@ -143,6 +145,7 @@ public class MyGameJPanel extends JPanel {
             player2.resetBattleState();
             player2.setVisible(true);
             player2.setPlayerNumber(2);
+            applyAttrCheats(player2, GameContext.cheatP2Mods);
             em.addElement("players", player2);
         }
     }
@@ -208,6 +211,23 @@ public class MyGameJPanel extends JPanel {
             if (GameContext.playerWin) bh.setTotalWins(bh.getTotalWins() + 1);
             else bh.setTotalLosses(bh.getTotalLosses() + 1);
         }
+    }
+
+    private void applyAttrCheats(Players p, GameContext.AttributeMods mods) {
+        if (mods == null) return;
+        p.setMaxHp(Math.max(1, p.getMaxHp() + mods.hp));
+        p.setHp(p.getMaxHp());
+        p.setAttack(Math.max(0, p.getAttack() + mods.attack));
+        p.setDefense(Math.max(0, p.getDefense() + mods.defense));
+        p.setSpeed(Math.max(1, p.getSpeed() + mods.speed));
+        p.setTurnSpeed(Math.max(1, p.getTurnSpeed() + mods.turnSpeed));
+        p.setBulletSpeed(Math.max(1, p.getBulletSpeed() + mods.bulletSpeed));
+        int newAmmo = Math.max(1, p.getMaxAmmo() + mods.ammo);
+        p.setMaxAmmo(newAmmo);
+        p.setAmmo(newAmmo);
+        p.setReloadTime(Math.max(0, p.getReloadTime() + mods.reloadTime * 1000));
+        p.setDurability(Math.max(0, p.getMaxDurability() + mods.durability));
+        p.setMaxDurability(Math.max(0, p.getMaxDurability() + mods.durability));
     }
 
     private void returnToMenu() {

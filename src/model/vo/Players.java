@@ -529,7 +529,9 @@ public class Players extends SuperElement {
     public int getAmmo() { return ammo; }
     public void setAmmo(int ammo) { this.ammo = ammo; }
     public int getMaxAmmo() { return maxAmmo; }
+    public void setMaxAmmo(int a) { this.maxAmmo = a; }
     public int getReloadTime() { return reloadTime; }
+    public void setReloadTime(int t) { this.reloadTime = t; }
     public boolean isReloading() { return isReloading; }
     public long getReloadStartTime() { return reloadStartTime; }
     public void setReloading(boolean r) { this.isReloading = r; }
@@ -537,6 +539,7 @@ public class Players extends SuperElement {
     public int getDurability() { return durability; }
     public void setDurability(int d) { this.durability = d; }
     public int getMaxDurability() { return maxDurability; }
+    public void setMaxDurability(int d) { this.maxDurability = d; }
     public int getUnlockedSlots() { return unlockedSlots; }
     public void setUnlockedSlots(int s) { this.unlockedSlots = s; }
     public Modification[] getInstalledMods() { return installedMods; }

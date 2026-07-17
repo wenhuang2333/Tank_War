@@ -8,6 +8,8 @@ import javax.swing.JSlider;
 import javax.swing.JCheckBox;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import java.util.Map;
+import java.util.HashMap;
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.Color;
@@ -25,6 +27,7 @@ public class SettingsPanel extends BasePanel {
     private JCheckBox cheatP1WallPassCb, cheatP2WallPassCb;
     private JCheckBox cheatNoDurabilityCb, cheatBulletReboundCb;
     private JCheckBox cheatFriendlyFireCb;
+    private Map<String, JSpinner> attrSpinners = new HashMap<>();
 
     public SettingsPanel(MyJFrame frame) {
         super(frame);
@@ -124,6 +127,26 @@ public class SettingsPanel extends BasePanel {
         battlePanel.add(cheatTitle);
         battlePanel.add(new JLabel());
 
+        // P1 attribute mods
+        JLabel p1ModTitle = new JLabel("P1 属性修改 (0=不改):");
+        p1ModTitle.setFont(new Font("微软雅黑", Font.BOLD, 14));
+        p1ModTitle.setForeground(Color.CYAN);
+        battlePanel.add(p1ModTitle);
+        battlePanel.add(new JLabel());
+        addAttrModRow(battlePanel, "HP", "p1Hp", "攻击", "p1Atk", "防御", "p1Def");
+        addAttrModRow(battlePanel, "速度", "p1Spd", "转向", "p1Turn", "弹速", "p1BulSpd");
+        addAttrModRow(battlePanel, "弹药", "p1Ammo", "换弹", "p1Reload", "耐久", "p1Dur");
+
+        // P2 attribute mods
+        JLabel p2ModTitle = new JLabel("P2 属性修改 (0=不改):");
+        p2ModTitle.setFont(new Font("微软雅黑", Font.BOLD, 14));
+        p2ModTitle.setForeground(Color.CYAN);
+        battlePanel.add(p2ModTitle);
+        battlePanel.add(new JLabel());
+        addAttrModRow(battlePanel, "HP", "p2Hp", "攻击", "p2Atk", "防御", "p2Def");
+        addAttrModRow(battlePanel, "速度", "p2Spd", "转向", "p2Turn", "弹速", "p2BulSpd");
+        addAttrModRow(battlePanel, "弹药", "p2Ammo", "换弹", "p2Reload", "耐久", "p2Dur");
+
         battlePanel.add(makeLabel("P1 无敌:"));
         cheatP1InvincibleCb = new JCheckBox();
         cheatP1InvincibleCb.setOpaque(false);
@@ -185,6 +208,24 @@ public class SettingsPanel extends BasePanel {
         return label;
     }
 
+    private void addAttrModRow(JPanel panel, String l1, String k1, String l2, String k2, String l3, String k3) {
+        addAttrModCell(panel, l1, k1);
+        addAttrModCell(panel, l2, k2);
+        addAttrModCell(panel, l3, k3);
+    }
+
+    private void addAttrModCell(JPanel panel, String label, String key) {
+        JLabel lbl = new JLabel(label + ":");
+        lbl.setFont(new Font("微软雅黑", Font.PLAIN, 13));
+        lbl.setForeground(Color.LIGHT_GRAY);
+        panel.add(lbl);
+        JSpinner sp = new JSpinner(new SpinnerNumberModel(0, -999, 999, 1));
+        sp.setFont(new Font("微软雅黑", Font.PLAIN, 12));
+        ((JSpinner.DefaultEditor) sp.getEditor()).getTextField().setColumns(4);
+        attrSpinners.put(key, sp);
+        panel.add(sp);
+    }
+
     private void applyBattleSettings() {
         GameContext.matchDuration = ((Number) matchTimeSpinner.getValue()).intValue() * 60;
         GameContext.overtimeMode = overtimeModeCb.isSelected();
@@ -196,5 +237,26 @@ public class SettingsPanel extends BasePanel {
         GameContext.cheatNoDurability = cheatNoDurabilityCb.isSelected();
         GameContext.cheatBulletRebound = cheatBulletReboundCb.isSelected();
         GameContext.cheatFriendlyFire = cheatFriendlyFireCb.isSelected();
+
+        // Apply attribute cheat modifiers
+        readAttrMods("p1", GameContext.cheatP1Mods);
+        readAttrMods("p2", GameContext.cheatP2Mods);
+    }
+
+    private void readAttrMods(String prefix, GameContext.AttributeMods mods) {
+        mods.hp = getSpinnerVal(prefix + "Hp");
+        mods.attack = getSpinnerVal(prefix + "Atk");
+        mods.defense = getSpinnerVal(prefix + "Def");
+        mods.speed = getSpinnerVal(prefix + "Spd");
+        mods.turnSpeed = getSpinnerVal(prefix + "Turn");
+        mods.bulletSpeed = getSpinnerVal(prefix + "BulSpd");
+        mods.ammo = getSpinnerVal(prefix + "Ammo");
+        mods.reloadTime = getSpinnerVal(prefix + "Reload");
+        mods.durability = getSpinnerVal(prefix + "Dur");
+    }
+
+    private int getSpinnerVal(String key) {
+        JSpinner sp = attrSpinners.get(key);
+        return sp != null ? ((Number) sp.getValue()).intValue() : 0;
     }
 }
