@@ -28,10 +28,10 @@ public class Players extends SuperElement {
     protected int defense;
     protected int speed;
     protected int turnSpeed;
-    protected int fireRate;
+    protected double fireRate;
     protected long lastFireTime;
     protected int bulletSpeed;
-    protected int bulletDuration;
+    protected double bulletDuration;
     protected int ammo;
     protected int maxAmmo;
     protected int reloadTime;
@@ -465,12 +465,12 @@ public class Players extends SuperElement {
     public void setSpeed(int speed) { this.speed = speed; }
     public int getTurnSpeed() { return turnSpeed; }
     public void setTurnSpeed(int turnSpeed) { this.turnSpeed = turnSpeed; }
-    public int getFireRate() { return fireRate; }
+    public double getFireRate() { return fireRate; }
     public long getLastFireTime() { return lastFireTime; }
     public void setLastFireTime(long t) { this.lastFireTime = t; }
     public int getBulletSpeed() { return bulletSpeed; }
     public void setBulletSpeed(int s) { this.bulletSpeed = s; }
-    public int getBulletDuration() { return bulletDuration; }
+    public double getBulletDuration() { return bulletDuration; }
     public int getAmmo() { return ammo; }
     public void setAmmo(int ammo) { this.ammo = ammo; }
     public int getMaxAmmo() { return maxAmmo; }

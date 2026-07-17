@@ -10,9 +10,9 @@ public class TankData {
     private String name;
     private int baseHp, baseAttack, baseDefense, baseSpeed;
     private int baseTurnSpeed;
-    private int baseFireRate;
+    private double baseFireRate;
     private int baseBulletSpeed;
-    private int baseBulletDuration;
+    private double baseBulletDuration;
     private int baseAmmo;
     private int baseReloadTime;
     private int baseDurability;
@@ -22,7 +22,7 @@ public class TankData {
     public TankData() {}
 
     public TankData(int id, String name, int hp, int atk, int def, int spd, int turnSpd,
-                    int fireRate, int bulletSpd, int bulletDur, int ammo, int reload, int dura) {
+                    double fireRate, int bulletSpd, double bulletDur, int ammo, int reload, int dura) {
         this.id = id;
         this.name = name;
         this.baseHp = hp;
@@ -45,9 +45,9 @@ public class TankData {
     public int getBaseDefense() { return baseDefense; }
     public int getBaseSpeed() { return baseSpeed; }
     public int getBaseTurnSpeed() { return baseTurnSpeed; }
-    public int getBaseFireRate() { return baseFireRate; }
+    public double getBaseFireRate() { return baseFireRate; }
     public int getBaseBulletSpeed() { return baseBulletSpeed; }
-    public int getBaseBulletDuration() { return baseBulletDuration; }
+    public double getBaseBulletDuration() { return baseBulletDuration; }
     public int getBaseAmmo() { return baseAmmo; }
     public int getBaseReloadTime() { return baseReloadTime; }
     public int getBaseDurability() { return baseDurability; }

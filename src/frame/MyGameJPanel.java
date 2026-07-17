@@ -157,8 +157,18 @@ public class MyGameJPanel extends JPanel {
 
     private void onBattleEnd() {
         renderTimer.stop();
+        saveBattleStats();
         giveRewards();
         SaveManager.getInstance().save(GameContext.currentSave);
+    }
+
+    private void saveBattleStats() {
+        GameContext.p1ShotsFired = player1 != null ? player1.getShotsFired() : 0;
+        GameContext.p1DamageDealt = player1 != null ? player1.getDamageDealt() : 0;
+        GameContext.p1DamageReceived = player1 != null ? player1.getDamageReceived() : 0;
+        GameContext.p2ShotsFired = player2 != null ? player2.getShotsFired() : 0;
+        GameContext.p2DamageDealt = player2 != null ? player2.getDamageDealt() : 0;
+        GameContext.p2DamageReceived = player2 != null ? player2.getDamageReceived() : 0;
     }
 
     private void giveRewards() {

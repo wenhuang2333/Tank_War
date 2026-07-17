@@ -88,8 +88,13 @@ public class GachaPanel extends BasePanel {
         resourcePanel.add(craftSpecificBtn);
         resourcePanel.add(craftUniversalBtn);
 
+        JButton exchangeBtn = new JButton("碎片兑换 (2换1通用)");
+        exchangeBtn.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+        resourcePanel.add(exchangeBtn);
+
         craftSpecificBtn.addActionListener(e -> craftSpecific());
         craftUniversalBtn.addActionListener(e -> craftUniversal());
+        exchangeBtn.addActionListener(e -> exchangeFragments());
 
         panel.add(resourcePanel, BorderLayout.SOUTH);
         return panel;
@@ -176,6 +181,43 @@ public class GachaPanel extends BasePanel {
         frame.updateResourceBar();
         updateInfo();
         JOptionPane.showMessageDialog(frame, sb.toString(), "抽卡结果", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void exchangeFragments() {
+        java.util.Map<String, Integer> frags = GameContext.currentSave.getModificationInv().getSpecificFragments();
+        java.util.List<String> available = new java.util.ArrayList<>();
+        for (java.util.Map.Entry<String, Integer> e : frags.entrySet()) {
+            if (e.getValue() >= 2) available.add(e.getKey());
+        }
+        if (available.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "没有足够的特定碎片（需要至少2个）", "提示", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        String choice = (String) JOptionPane.showInputDialog(frame,
+            "选择要兑换的碎片类型 (2碎片→1通用碎片):", "碎片兑换",
+            JOptionPane.PLAIN_MESSAGE, null, available.toArray(), available.get(0));
+        if (choice != null) {
+            int count = frags.get(choice);
+            int maxExchange = count / 2;
+            String amtStr = JOptionPane.showInputDialog(frame,
+                choice + " 当前: " + count + "个, 最多可兑换: " + maxExchange + "次\n输入兑换次数:", "1");
+            if (amtStr != null && !amtStr.trim().isEmpty()) {
+                try {
+                    int times = Integer.parseInt(amtStr.trim());
+                    if (times < 1 || times > maxExchange) {
+                        JOptionPane.showMessageDialog(frame, "无效的兑换次数", "提示", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    frags.put(choice, count - times * 2);
+                    GameContext.currentSave.getModificationInv().setUniversalFragments(
+                        GameContext.currentSave.getModificationInv().getUniversalFragments() + times);
+                    SaveManager.getInstance().save(GameContext.currentSave);
+                    JOptionPane.showMessageDialog(frame, "兑换成功！获得 " + times + " 个通用碎片", "成功", JOptionPane.INFORMATION_MESSAGE);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "请输入有效数字", "提示", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }
     }
 
     private void updateInfo() {

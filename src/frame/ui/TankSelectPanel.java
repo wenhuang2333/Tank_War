@@ -30,9 +30,11 @@ import util.ResourceManager;
 public class TankSelectPanel extends BasePanel {
     private int selectedMap = 1;
     private int selectedPlayerTank = 1;
+    private int selectedPlayer2Tank = 2;
     private int selectedBossTank = 2;
     private String selectedDifficulty = "easy";
-    private JLabel mapLabel, tankLabel;
+    private boolean selectingP2;
+    private JLabel mapLabel, tankLabel, tank2Label;
     private JComboBox<String> difficultyCombo;
 
     public TankSelectPanel(MyJFrame frame) {
@@ -77,51 +79,106 @@ public class TankSelectPanel extends BasePanel {
         mapWrap.add(mapPanel, BorderLayout.CENTER);
         mapWrap.add(mapLabelRow, BorderLayout.SOUTH);
 
-        // Tank selection with icon
-        JPanel tankPanel = new JPanel();
-        tankPanel.setBackground(Color.DARK_GRAY);
+        boolean isPvp = "pvp".equals(GameContext.battleMode);
+
+        // Tank 1 selection with icon
+        JPanel tank1Panel = new JPanel();
+        tank1Panel.setBackground(Color.DARK_GRAY);
         JLabel tankIconLabel = new JLabel("", JLabel.CENTER);
         tankIconLabel.setPreferredSize(new Dimension(140, 160));
-        updateTankIcon(tankIconLabel);
-        tankLabel = new JLabel("我方坦克: 1 - 克伦威尔", JLabel.CENTER);
+        updateTankIcon(tankIconLabel, selectedPlayerTank);
+        tankLabel = new JLabel((isPvp ? "P1坦克: " : "我方坦克: ") + "1 - 克伦威尔", JLabel.CENTER);
         tankLabel.setFont(new Font("微软雅黑", Font.PLAIN, 20));
         tankLabel.setForeground(Color.WHITE);
         JButton prevTank = createImageButton(ResourceManager.COMMON_ARROW_LEFT, 36, 36);
         JButton nextTank = createImageButton(ResourceManager.COMMON_ARROW_RIGHT, 36, 36);
-        prevTank.addActionListener(e -> { selectedPlayerTank = Math.max(1, selectedPlayerTank - 1); updateLabels(); updateTankIcon(tankIconLabel); });
-        nextTank.addActionListener(e -> { selectedPlayerTank = Math.min(8, selectedPlayerTank + 1); updateLabels(); updateTankIcon(tankIconLabel); });
-        tankPanel.add(prevTank);
-        tankPanel.add(tankIconLabel);
-        tankPanel.add(nextTank);
-        JPanel tankLabelRow = new JPanel();
-        tankLabelRow.setBackground(Color.DARK_GRAY);
-        tankLabelRow.add(tankLabel);
+        prevTank.addActionListener(e -> { selectedPlayerTank = Math.max(1, selectedPlayerTank - 1); updateLabels(); updateTankIcon(tankIconLabel, selectedPlayerTank); });
+        nextTank.addActionListener(e -> { selectedPlayerTank = Math.min(8, selectedPlayerTank + 1); updateLabels(); updateTankIcon(tankIconLabel, selectedPlayerTank); });
+        tank1Panel.add(prevTank);
+        tank1Panel.add(tankIconLabel);
+        tank1Panel.add(nextTank);
+        JPanel tank1LabelRow = new JPanel();
+        tank1LabelRow.setBackground(Color.DARK_GRAY);
+        tank1LabelRow.add(tankLabel);
 
-        // Difficulty
-        JPanel diffPanel = new JPanel();
-        diffPanel.setBackground(Color.DARK_GRAY);
-        JLabel diffLabel = new JLabel("难度:", JLabel.CENTER);
-        diffLabel.setFont(new Font("微软雅黑", Font.PLAIN, 20));
-        diffLabel.setForeground(Color.WHITE);
-        JButton easyBtn = createImageButton(ResourceManager.SELECT_BTN_EASY, 180, 55);
-        JButton hardBtn = createImageButton(ResourceManager.SELECT_BTN_HARD, 180, 55);
-        JButton superBtn = createImageButton(ResourceManager.SELECT_BTN_SUPER, 180, 55);
-        easyBtn.addActionListener(e -> selectedDifficulty = "easy");
-        hardBtn.addActionListener(e -> selectedDifficulty = "hard");
-        superBtn.addActionListener(e -> selectedDifficulty = "super");
-        diffPanel.add(diffLabel);
-        diffPanel.add(easyBtn);
-        diffPanel.add(hardBtn);
-        diffPanel.add(superBtn);
+        // Tank 2 selection (PVP only)
+        JPanel tank2Section = null;
+        JLabel tank2IconLabel = null;
+        if (isPvp) {
+            tank2Section = new JPanel(new BorderLayout());
+            tank2Section.setBackground(Color.DARK_GRAY);
+            JPanel tank2Panel = new JPanel();
+            tank2Panel.setBackground(Color.DARK_GRAY);
+            tank2IconLabel = new JLabel("", JLabel.CENTER);
+            tank2IconLabel.setPreferredSize(new Dimension(140, 160));
+            updateTankIcon(tank2IconLabel, selectedPlayer2Tank);
+            tank2Label = new JLabel("P2坦克: 2 - M24霞飞", JLabel.CENTER);
+            tank2Label.setFont(new Font("微软雅黑", Font.PLAIN, 20));
+            tank2Label.setForeground(Color.WHITE);
+            JButton prevTank2 = createImageButton(ResourceManager.COMMON_ARROW_LEFT, 36, 36);
+            JButton nextTank2 = createImageButton(ResourceManager.COMMON_ARROW_RIGHT, 36, 36);
+            final JLabel t2IconRef = tank2IconLabel;
+            prevTank2.addActionListener(e -> { selectedPlayer2Tank = Math.max(1, selectedPlayer2Tank - 1); updateLabels(); updateTankIcon(t2IconRef, selectedPlayer2Tank); });
+            nextTank2.addActionListener(e -> { selectedPlayer2Tank = Math.min(8, selectedPlayer2Tank + 1); updateLabels(); updateTankIcon(t2IconRef, selectedPlayer2Tank); });
+            tank2Panel.add(prevTank2);
+            tank2Panel.add(tank2IconLabel);
+            tank2Panel.add(nextTank2);
+            JPanel tank2LabelRow = new JPanel();
+            tank2LabelRow.setBackground(Color.DARK_GRAY);
+            tank2LabelRow.add(tank2Label);
+            tank2Section.add(tank2Panel, BorderLayout.CENTER);
+            tank2Section.add(tank2LabelRow, BorderLayout.SOUTH);
+        }
+
+        // Difficulty (PVE only) or Settings button (PVP)
+        JPanel bottomRow = new JPanel();
+        bottomRow.setBackground(Color.DARK_GRAY);
+        if (isPvp) {
+            JButton settingsBtn = new JButton("比赛设置");
+            settingsBtn.setFont(new Font("微软雅黑", Font.BOLD, 18));
+            settingsBtn.setBackground(new Color(60, 80, 100));
+            settingsBtn.setForeground(Color.WHITE);
+            settingsBtn.setFocusPainted(false);
+            settingsBtn.addActionListener(e -> frame.showPanel("settings"));
+            bottomRow.add(settingsBtn);
+        } else {
+            JLabel diffLabel = new JLabel("难度:", JLabel.CENTER);
+            diffLabel.setFont(new Font("微软雅黑", Font.PLAIN, 20));
+            diffLabel.setForeground(Color.WHITE);
+            JButton easyBtn = createImageButton(ResourceManager.SELECT_BTN_EASY, 180, 55);
+            JButton hardBtn = createImageButton(ResourceManager.SELECT_BTN_HARD, 180, 55);
+            JButton superBtn = createImageButton(ResourceManager.SELECT_BTN_SUPER, 180, 55);
+            easyBtn.addActionListener(e -> selectedDifficulty = "easy");
+            hardBtn.addActionListener(e -> selectedDifficulty = "hard");
+            superBtn.addActionListener(e -> selectedDifficulty = "super");
+            bottomRow.add(diffLabel);
+            bottomRow.add(easyBtn);
+            bottomRow.add(hardBtn);
+            bottomRow.add(superBtn);
+        }
 
         JPanel tankWrap = new JPanel(new BorderLayout());
         tankWrap.setBackground(Color.DARK_GRAY);
-        tankWrap.add(tankPanel, BorderLayout.CENTER);
-        tankWrap.add(tankLabelRow, BorderLayout.SOUTH);
+        tankWrap.add(tank1Panel, BorderLayout.CENTER);
+        tankWrap.add(tank1LabelRow, BorderLayout.SOUTH);
 
-        center.add(mapWrap);
-        center.add(tankWrap);
-        center.add(diffPanel);
+        if (isPvp) {
+            // GridLayout of 4 rows: map, tank1, tank2, bottomRow
+            JPanel newCenter = new JPanel(new GridLayout(4, 1, 10, 10));
+            newCenter.setBackground(Color.DARK_GRAY);
+            newCenter.setBorder(javax.swing.BorderFactory.createEmptyBorder(30, 200, 30, 200));
+            newCenter.add(mapWrap);
+            newCenter.add(tankWrap);
+            newCenter.add(tank2Section);
+            newCenter.add(bottomRow);
+            // Remove old center, add new one
+            panel.remove(center);
+            panel.add(newCenter, BorderLayout.CENTER);
+        } else {
+            center.add(mapWrap);
+            center.add(tankWrap);
+            center.add(bottomRow);
+        }
 
         JButton startBtn = createImageButton(ResourceManager.SELECT_BTN_START_BATTLE, 240, 70);
         startBtn.addActionListener(e -> startBattle());
@@ -142,8 +199,8 @@ public class TankSelectPanel extends BasePanel {
         }
     }
 
-    private void updateTankIcon(JLabel label) {
-        String path = ResourceManager.tankBody(selectedPlayerTank);
+    private void updateTankIcon(JLabel label, int tankId) {
+        String path = ResourceManager.tankBody(tankId);
         java.awt.image.BufferedImage img = ElementLoad.getInstance().getImage(path);
         if (img != null && img.getWidth() > 10) {
             int displayW = Math.min(img.getWidth(), 120);
@@ -152,26 +209,41 @@ public class TankSelectPanel extends BasePanel {
         }
     }
 
+    private boolean isPvp() { return "pvp".equals(GameContext.battleMode); }
+
     private void updateLabels() {
         String[] mapNames = {"", "开阔平原", "中门对狙", "迷宫回廊", "长枪直道", "十字要冲", "回字堡垒"};
         mapLabel.setText("地图: " + selectedMap + " - " + mapNames[selectedMap]);
         TankData td = TankDataManager.getInstance().getTankData(selectedPlayerTank);
-        tankLabel.setText("我方坦克: " + selectedPlayerTank + " - " + (td != null ? td.getName() : ""));
+        boolean pvp = isPvp();
+        tankLabel.setText((pvp ? "P1坦克: " : "我方坦克: ") + selectedPlayerTank + " - " + (td != null ? td.getName() : ""));
+        if (pvp && tank2Label != null) {
+            TankData td2 = TankDataManager.getInstance().getTankData(selectedPlayer2Tank);
+            tank2Label.setText("P2坦克: " + selectedPlayer2Tank + " - " + (td2 != null ? td2.getName() : ""));
+        }
     }
 
     private void startBattle() {
         GameContext.selectedMap = selectedMap;
         GameContext.player1TankId = selectedPlayerTank;
+        GameContext.player2TankId = selectedPlayer2Tank;
         GameContext.difficulty = selectedDifficulty;
         GameContext.isInBattle = true;
         GameContext.battleEnded = false;
 
         ElementFactory factory = ElementFactory.getInstance();
         Players p1 = factory.createPlayer(selectedPlayerTank, GameConfig.P1_SPAWN_X, GameConfig.P1_SPAWN_Y);
-        Boss boss = factory.createBoss(selectedBossTank, GameConfig.P2_SPAWN_X, GameConfig.P2_SPAWN_Y,
-            selectedDifficulty.equals("hard") ? new HardAI() :
-            selectedDifficulty.equals("super") ? new SuperAI() : new EasyAI());
 
-        frame.showGamePanel(p1, boss, selectedMap, selectedDifficulty, GameConfig.DEFAULT_MATCH_DURATION);
+        boolean isPvp = "pvp".equals(GameContext.battleMode);
+        int duration = isPvp ? GameContext.matchDuration : GameConfig.DEFAULT_MATCH_DURATION;
+        if (isPvp) {
+            Players p2 = factory.createPlayer(selectedPlayer2Tank, GameConfig.P2_SPAWN_X, GameConfig.P2_SPAWN_Y);
+            frame.showGamePanel(p1, p2, selectedMap, "pvp", duration);
+        } else {
+            Boss boss = factory.createBoss(selectedBossTank, GameConfig.P2_SPAWN_X, GameConfig.P2_SPAWN_Y,
+                selectedDifficulty.equals("hard") ? new HardAI() :
+                selectedDifficulty.equals("super") ? new SuperAI() : new EasyAI());
+            frame.showGamePanel(p1, boss, selectedMap, selectedDifficulty, duration);
+        }
     }
 }

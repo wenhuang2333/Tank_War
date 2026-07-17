@@ -126,6 +126,9 @@ public class CollisionUtil {
             return;
         }
         tank.takeDamage(b.getDamage());
+        if (b.getOwner() != null) {
+            b.getOwner().setDamageDealt(b.getOwner().getDamageDealt() + b.getDamage());
+        }
         if (b.isLaser()) {
             b.setLaserHitCount(b.getLaserHitCount() + 1);
         } else {

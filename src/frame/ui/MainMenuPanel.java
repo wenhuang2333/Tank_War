@@ -38,7 +38,10 @@ public class MainMenuPanel extends BasePanel {
 
         JButton battleBtn = createImageButton(ResourceManager.MENU_BTN_BATTLE, 260, 90);
         battleBtn.addActionListener(e -> {
-            GameContext.battleMode = "pve";
+            String[] options = {"人机对战 (PVE)", "双人对战 (PVP)"};
+            int choice = JOptionPane.showOptionDialog(frame, "请选择对战模式", "对战模式",
+                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+            GameContext.battleMode = (choice == 1) ? "pvp" : "pve";
             frame.showTankSelect();
         });
         buttonPanel.add(battleBtn);

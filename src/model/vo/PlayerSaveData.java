@@ -126,8 +126,11 @@ public class PlayerSaveData {
     }
 
     public static class CombatStats {
-        private int hp, attack, defense, speed, turnSpeed, fireRate;
-        private int bulletSpeed, bulletDuration, ammo, reloadTime, maxDurability;
+        private int hp, attack, defense, speed, turnSpeed;
+        private double fireRate;
+        private int bulletSpeed;
+        private double bulletDuration;
+        private int ammo, reloadTime, maxDurability;
 
         public CombatStats() {}
         public CombatStats(TankData td) {
@@ -153,12 +156,12 @@ public class PlayerSaveData {
         public void setSpeed(int v) { this.speed = v; }
         public int getTurnSpeed() { return turnSpeed; }
         public void setTurnSpeed(int v) { this.turnSpeed = v; }
-        public int getFireRate() { return fireRate; }
-        public void setFireRate(int v) { this.fireRate = v; }
+        public double getFireRate() { return fireRate; }
+        public void setFireRate(double v) { this.fireRate = v; }
         public int getBulletSpeed() { return bulletSpeed; }
         public void setBulletSpeed(int v) { this.bulletSpeed = v; }
-        public int getBulletDuration() { return bulletDuration; }
-        public void setBulletDuration(int v) { this.bulletDuration = v; }
+        public double getBulletDuration() { return bulletDuration; }
+        public void setBulletDuration(double v) { this.bulletDuration = v; }
         public int getAmmo() { return ammo; }
         public void setAmmo(int v) { this.ammo = v; }
         public int getReloadTime() { return reloadTime; }

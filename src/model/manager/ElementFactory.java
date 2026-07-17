@@ -53,7 +53,7 @@ public class ElementFactory {
         Bullet b = new Bullet(x, y, (int)direction, owner);
         b.setDamage(owner.getAttack());
         b.setSpeed((int)(owner.getBulletSpeed() * TankData.BULLET_SPEED_FACTOR));
-        b.setLifeTime(owner.getBulletDuration() * 1000);
+        b.setLifeTime((int)(owner.getBulletDuration() * 1000));
         b.setRebound(true);
         b.setMaxRebounds(0);
         b.setLaser(false);
@@ -70,7 +70,7 @@ public class ElementFactory {
             Bullet b = new Bullet(x, y, (int)((bulletDir % 360 + 360) % 360), owner);
             b.setDamage((int)(owner.getAttack() * damageMult));
             b.setSpeed((int)(owner.getBulletSpeed() * TankData.BULLET_SPEED_FACTOR));
-            b.setLifeTime(owner.getBulletDuration() * 1000);
+            b.setLifeTime((int)(owner.getBulletDuration() * 1000));
             b.setRebound(false);
             b.setMaxRebounds(0);
             b.setLaser(false);

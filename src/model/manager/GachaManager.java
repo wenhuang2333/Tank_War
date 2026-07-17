@@ -86,17 +86,42 @@ public class GachaManager {
             ownedIds.add(ot.getTankId());
         }
 
-        List<Integer> unowned = new ArrayList<>();
+        List<Integer> allUnowned = new ArrayList<>();
         for (int id = 1; id <= 8; id++) {
-            if (!ownedIds.contains(id)) unowned.add(id);
+            if (!ownedIds.contains(id)) allUnowned.add(id);
         }
 
-        if (unowned.isEmpty()) {
+        if (allUnowned.isEmpty()) {
             save.getResources().setSteel(save.getResources().getSteel() + 500);
             return new Reward("steel_500", 500, true);
         }
 
-        int newId = unowned.get(random.nextInt(unowned.size()));
+        // Weighted: tanks 1 and 2 each 20%, remaining 60% split among other unowned
+        double roll = random.nextDouble() * 100.0;
+        boolean canGet1 = allUnowned.contains(1);
+        boolean canGet2 = allUnowned.contains(2);
+        double w1 = canGet1 ? 20.0 : 0.0;
+        double w2 = canGet2 ? 20.0 : 0.0;
+        double wOther = 100.0 - w1 - w2;
+
+        int newId;
+        if (roll < w1) {
+            newId = 1;
+        } else if (roll < w1 + w2) {
+            newId = 2;
+        } else {
+            List<Integer> otherUnowned = new ArrayList<>();
+            for (int id : allUnowned) {
+                if (id != 1 && id != 2) otherUnowned.add(id);
+            }
+            if (otherUnowned.isEmpty()) {
+                // Only tanks 1 and 2 remain unowned; re-roll between them
+                newId = random.nextBoolean() && canGet1 ? 1 : (canGet2 ? 2 : allUnowned.get(0));
+            } else {
+                newId = otherUnowned.get(random.nextInt(otherUnowned.size()));
+            }
+        }
+
         PlayerSaveData.OwnedTank newTank = PlayerSaveData.OwnedTank.createNew(newId);
         save.getOwnedTanks().add(newTank);
 

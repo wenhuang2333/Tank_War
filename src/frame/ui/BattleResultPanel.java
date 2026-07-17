@@ -30,15 +30,37 @@ public class BattleResultPanel extends BasePanel {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBackground(Color.DARK_GRAY);
 
-        JPanel center = new JPanel(new GridLayout(6, 1, 10, 10));
+        JPanel center = new JPanel(new GridLayout(10, 1, 10, 10));
         center.setBackground(Color.DARK_GRAY);
-        center.setBorder(javax.swing.BorderFactory.createEmptyBorder(80, 300, 80, 300));
+        center.setBorder(javax.swing.BorderFactory.createEmptyBorder(50, 300, 50, 300));
 
         boolean win = GameContext.playerWin;
         JLabel resultLabel = createImageLabel(
             win ? ResourceManager.RESULT_VICTORY_TEXT : ResourceManager.RESULT_DEFEAT_TEXT, 340, 90);
         resultLabel.setHorizontalAlignment(JLabel.CENTER);
         center.add(resultLabel);
+
+        // Battle stats comparison
+        JLabel statsTitle = new JLabel("—— 战斗数据对比 ——", JLabel.CENTER);
+        statsTitle.setFont(new Font("微软雅黑", Font.BOLD, 18));
+        statsTitle.setForeground(Color.ORANGE);
+        center.add(statsTitle);
+
+        String p1Label = "P1";
+        String p2Label = "pvp".equals(GameContext.battleMode) ? "P2" : "AI";
+        JLabel shotsLabel = new JLabel("开火数:  " + p1Label + ": " + GameContext.p1ShotsFired + "  |  " + p2Label + ": " + GameContext.p2ShotsFired, JLabel.CENTER);
+        shotsLabel.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+        shotsLabel.setForeground(Color.WHITE);
+        JLabel dmgDealtLabel = new JLabel("造成伤害:  " + p1Label + ": " + GameContext.p1DamageDealt + "  |  " + p2Label + ": " + GameContext.p2DamageDealt, JLabel.CENTER);
+        dmgDealtLabel.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+        dmgDealtLabel.setForeground(Color.WHITE);
+        JLabel dmgRecvLabel = new JLabel("受到伤害:  " + p1Label + ": " + GameContext.p1DamageReceived + "  |  " + p2Label + ": " + GameContext.p2DamageReceived, JLabel.CENTER);
+        dmgRecvLabel.setFont(new Font("微软雅黑", Font.PLAIN, 16));
+        dmgRecvLabel.setForeground(Color.WHITE);
+
+        center.add(shotsLabel);
+        center.add(dmgDealtLabel);
+        center.add(dmgRecvLabel);
 
         PlayerSaveData.Resources r = GameContext.currentSave.getResources();
         JLabel ironLabel = new JLabel("粗铁: " + r.getIron(), JLabel.CENTER);
