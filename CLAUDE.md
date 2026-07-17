@@ -78,4 +78,4 @@ All visible entities extend `SuperElement` (abstract: `show()`, `move()`, `updat
 | Control | `thread` | `GameThread`, AI controllers (`thread/ai/`) |
 | Model | `model.vo`, `model.load`, `model.manager` | `SuperElement`, `Players`, `Bullet`, `ElementManager`, `ElementFactory`, `SaveManager` |
 
-Map files: `resource/map-data/*.map` (1.map–10.map) — semicolon-separated `BRICK=x,y` / `IRON=x,y` entries.
+Map files: `resource/map-now-data/*.map`（正式地图 1.map–6.map，40px 网格，含 `#` 注释行）— semicolon-separated `BRICK=x,y` / `IRON=x,y` entries. Coordinate system: 地图区 1080×680 居中（偏移 150,70），详见 `action.md` 7.1。`resource/map-data/` 为旧 20px 网格样例，不再使用。
