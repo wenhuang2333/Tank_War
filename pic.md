@@ -255,8 +255,8 @@ HUD 元素分布在游戏地图区域的外侧（左右或底部）。
 | 文件名 | 说明 | 参考尺寸 |
 |--------|------|----------|
 | `result_victory_bg.png` | 胜利结算背景 | 1380×820 |
-| `result_defeat_bg.png` | 失败结算背景 | 1380×820 |
-| `result_draw_bg.png` | 平局结算背景 | 1380×820 |
+| `result_defeat_bg.jpg` | 失败结算背景 | 1380×820 |
+| `result_draw_bg.jpg` | 平局结算背景 | 1380×820 |
 | `result_victory_text.png` | "胜利" 标题大字 | 340×90 |
 | `result_defeat_text.png` | "失败" 标题大字 | 340×90 |
 | `result_stat_panel.png` | 数据统计对比面板背景 | 680×380 |
@@ -270,18 +270,18 @@ HUD 元素分布在游戏地图区域的外侧（左右或底部）。
 
 | 文件名 | 说明 | 参考尺寸 |
 |--------|------|----------|
-| `gacha_bg.png` | 抽卡界面背景 | 1380×820 |
+| `gacha_bg.jpg` | 抽卡界面背景 | 1380×820 |
 | `gacha_tank_pool_bg.png` | 坦克池区域背景 | 580×520 |
 | `gacha_mod_pool_bg.png` | 改装池区域背景 | 580×520 |
 | `btn_pull_one.png` | 单抽按钮（消耗 3 蓝图） | 200×60 |
 | `btn_pull_ten.png` | 十连抽按钮（消耗 27 蓝图） | 220×60 |
-| `gacha_animation_bg.png` | 翻牌展示层全屏背景 | 1380×820 |
+| `gacha_animation_bg.jpg` | 翻牌展示层全屏背景 | 1380×820 |
 | `gacha_card_back.png` | 牌背（未翻开状态，单抽/十连通用） | 120×170 |
 | `btn_flip_all.png` | 一键翻开按钮（翻牌展示层右下角） | 200×60 |
 | `gacha_light_1.png` | 翻牌光效——普通（翻开瞬间闪烁一次后淡出） | 300×300 |
 | `gacha_light_2.png` | 金光特效——大奖（翻开后持续旋转+呼吸闪烁） | 400×400 |
 | `gacha_card_tank.png` | 结果卡正面——新坦克 | 120×170 |
-| `gacha_card_mod.png` | 结果卡正面——改装碎片 | 100×140 |
+| `gacha_card_mod.jpg` | 结果卡正面——改装碎片 | 100×140 |
 | `gacha_card_resource.png` | 结果卡正面——生铁/钢铁 | 100×120 |
 | `gacha_pity_bar_bg.png` | 保底计数条底框 | 380×16 |
 | `gacha_pity_bar_fill.png` | 保底计数条填充（宽 1px，代码拉伸） | 1×16 |
